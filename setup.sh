@@ -1,11 +1,20 @@
 #!/bin/bash
 
+# teamName is required
 if [ -z "$1" ]
 then
-  echo Team Name param missing
+  echo Usage: ./setup.sh teamName
   exit 1
 fi
 
+# help
+if [ "-h" == "$1" ] || [ "--help" == "$1" ]
+then
+  echo Usage: ./setup.sh teamName
+  exit 0
+fi
+
+# check Azure login
 if [ -z $(az ad signed-in-user show --query objectId -o tsv) ]
 then
   echo Login to Azure first
@@ -15,23 +24,48 @@ fi
 # change to the this directory
 cd $(dirname $0)
 
+# save param as ASB_TEAM_NAME
 export ASB_TEAM_NAME=$1
 
-# default location
+# set default domain name
+if [ -z "$ASB_DNS_ZONE" ]
+then
+  export ASB_DNS_ZONE=aks-sb.com
+fi
+export ASB_TLD=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
+
+# set default shared cert values
+if [ -z "$ASB_CERT_KV_NAME" ]
+then
+  export ASB_CERT_KV_NAME=kv-tld
+fi
+if [ -z "$ASB_CERT_NAME" ]
+then
+  export ASB_CERT_NAME=aks-sb
+fi
+
+# set default location
 if [ -z "$ASB_LOCATION" ]
 then
   export ASB_LOCATION=eastus2
 fi
 
+# set default geo redundant location for ACR
 if [ -z "$ASB_GEO_LOCATION" ]
 then
   export ASB_GEO_LOCATION=centralus
 fi
 
+# make sure the locations are different
+if [ "$ASB_LOCATION" == "$ASB_GEO_LOCATION" ]
+then
+  echo ASB_LOCATION and ASB_GEO_LOCATION must be different regions
+  echo Using paired regions is recommended
+  exit 1
+fi
+
 # github info for flux
 export ASB_GIT_REPO=$(git remote -v | cut -f 2 | cut -f 1 -d " " | head -n 1)
-export ASB_GIT_BRANCH=$ASB_TEAM_NAME
-export ASB_GIT_PATH=gitops
 
 if [ -z "$ASB_GIT_REPO" ]
 then
@@ -39,13 +73,16 @@ then
   exit 1
 fi
 
-# set domain name
-export ASB_DNS_ZONE=aks-sb.com
-export ASB_TLD=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
+export ASB_GIT_PATH=gitops
+export ASB_GIT_BRANCH=$(git status  --porcelain --branch | head -n 1 | cut -f 2 -d " " | cut -f 1 -d .)
 
-# export shared cert names
-export ASB_CERT_KV_NAME=kv-tld
-export ASB_CERT_NAME=aks-sb
+# don't allow main branch
+if [ "main" == "$ASB_GIT_BRANCH" ]
+then
+  echo Please create a branch for this cluster
+  echo See readme for instructions
+  exit 1
+fi
 
 # resource group names
 export ASB_CORE_RG=rg-${ASB_TEAM_NAME}-core
