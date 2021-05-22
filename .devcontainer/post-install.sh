@@ -37,3 +37,10 @@ git config --global core.whitespace blank-at-eol,blank-at-eof,space-before-tab
 git config --global pull.rebase false
 git config --global init.defaultbranch main
 git config --global core.pager more
+
+#install httpie
+sudo apt-get update
+sudo apt-get -y install --no-install-recommends httpie
+
+# upgrade packages
+sudo apt-get upgrade -y

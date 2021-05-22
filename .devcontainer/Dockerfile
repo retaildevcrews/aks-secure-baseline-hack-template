@@ -5,8 +5,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     sudo apt-get update && \
     sudo apt-get -y install --no-install-recommends apt-utils dialog && \
     sudo apt-get -y install --no-install-recommends bash-completion apt-transport-https ca-certificates && \
-    sudo apt-get -y install --no-install-recommends curl git wget nano software-properties-common make && \
-    sudo apt-get -y install --no-install-recommends httpie jq
+    sudo apt-get -y install --no-install-recommends curl git wget nano software-properties-common make jq
 
 # install k9s
 RUN sudo curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz && \
@@ -20,8 +19,3 @@ RUN sudo curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download
     kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null && \
     sudo curl -L https://github.com/fluxcd/flux/releases/download/1.14.2/fluxctl_linux_amd64 -o /usr/local/bin/fluxctl && \
     sudo chmod +x /usr/local/bin/fluxctl
-
-RUN sudo apt-get update && \
-    sudo apt-get upgrade -y && \
-    sudo apt-get autoremove -y && \
-    sudo apt-get clean -y
