@@ -6,25 +6,22 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     sudo apt-get -y install --no-install-recommends apt-utils dialog && \
     sudo apt-get -y install --no-install-recommends bash-completion apt-transport-https ca-certificates && \
     sudo apt-get -y install --no-install-recommends curl git wget nano software-properties-common make && \
-    sudo apt-get -y install --no-install-recommends httpie jq && \
-    sudo apt-get autoremove -y && \
-    sudo apt-get clean -y
+    sudo apt-get -y install --no-install-recommends httpie jq
 
 # install k9s
 RUN sudo curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz && \
     sudo mkdir k9s && \
     sudo tar xvzf k9s.tar.gz -C ./k9s && \
     sudo mv ./k9s/k9s /usr/local/bin/k9s && \
-    sudo rm -rf k9s.tar.gz k9s
-
-# install jp
-RUN VERSION=$(curl -i https://github.com/jmespath/jp/releases/latest | grep "location: https://github.com/" | rev | cut -f 1 -d / | rev | sed 's/\r//') && \
+    sudo rm -rf k9s.tar.gz k9s && \
+    VERSION=$(curl -i https://github.com/jmespath/jp/releases/latest | grep "location: https://github.com/" | rev | cut -f 1 -d / | rev | sed 's/\r//') && \
     sudo wget https://github.com/jmespath/jp/releases/download/$VERSION/jp-linux-amd64 -O /usr/local/bin/jp && \
-    sudo chmod +x /usr/local/bin/jp
-
-# generate kubectl completion
-RUN kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
-
-# install fluxctl
-RUN sudo curl -L https://github.com/fluxcd/flux/releases/download/1.14.2/fluxctl_linux_amd64 -o /usr/local/bin/fluxctl && \
+    sudo chmod +x /usr/local/bin/jp && \
+    kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null && \
+    sudo curl -L https://github.com/fluxcd/flux/releases/download/1.14.2/fluxctl_linux_amd64 -o /usr/local/bin/fluxctl && \
     sudo chmod +x /usr/local/bin/fluxctl
+
+RUN sudo apt-get update && \
+    sudo apt-get upgrade -y && \
+    sudo apt-get autoremove -y && \
+    sudo apt-get clean -y
