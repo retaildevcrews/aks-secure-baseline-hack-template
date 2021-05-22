@@ -38,6 +38,8 @@ git config --global pull.rebase false
 git config --global init.defaultbranch main
 git config --global core.pager more
 
+exit 0
+
 # install tools
 sudo apt-get update
 sudo apt-get -y install --no-install-recommends httpie jq bash-completion
