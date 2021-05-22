@@ -12,14 +12,21 @@ then
   exit 1
 fi
 
-# change to the proper directory
+# change to the this directory
 cd $(dirname $0)
 
 export ASB_TEAM_NAME=$1
 
-# location
-export ASB_LOCATION=eastus2
-export ASB_GEO_LOCATION=centralus
+# default location
+if [ -z "$ASB_LOCATION" ]
+then
+  export ASB_LOCATION=eastus2
+fi
+
+if [ -z "$ASB_GEO_LOCATION" ]
+then
+  export ASB_GEO_LOCATION=centralus
+fi
 
 # github info for flux
 export ASB_GIT_REPO=$(git remote -v | cut -f 2 | cut -f 1 -d " " | head -n 1)
