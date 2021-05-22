@@ -1,5 +1,7 @@
 #!/bin/sh
 
+exit 0
+
 # create directories
 mkdir -p .ssh
 mkdir -p .kube
