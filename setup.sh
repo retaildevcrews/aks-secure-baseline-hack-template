@@ -18,8 +18,8 @@ cd $(dirname $0)
 export ASB_TEAM_NAME=$1
 
 # location
-ASB_LOCATION=eastus2
-ASB_GEO_LOCATION=centralus
+export ASB_LOCATION=eastus2
+export ASB_GEO_LOCATION=centralus
 
 # github info for flux
 export ASB_GIT_REPO=$(git remote -v | cut -f 2 | cut -f 1 -d " " | head -n 1)
