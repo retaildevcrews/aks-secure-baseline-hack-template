@@ -37,30 +37,3 @@ git config --global core.whitespace blank-at-eol,blank-at-eof,space-before-tab
 git config --global pull.rebase false
 git config --global init.defaultbranch main
 git config --global core.pager more
-
-# install tools
-sudo apt-get update
-sudo apt-get install -y --no-install-recommends bash-completion curl git wget nano httpie jq
-
-# kubectl completion
-kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
-
-# install k9s
-curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz
-mkdir k9s
-tar xvzf k9s.tar.gz -C ./k9s
-sudo mv ./k9s/k9s /usr/local/bin/k9s
-rm -rf k9s.tar.gz k9s
-
-# install jmespath (jp)
-VERSION=$(curl -i https://github.com/jmespath/jp/releases/latest | grep "location: https://github.com/" | rev | cut -f 1 -d / | rev | sed 's/\r//')
-sudo wget https://github.com/jmespath/jp/releases/download/$VERSION/jp-linux-amd64 -O /usr/local/bin/jp
-sudo chmod +x /usr/local/bin/jp
-
-# install fluxctl
-sudo curl -L https://github.com/fluxcd/flux/releases/download/1.14.2/fluxctl_linux_amd64 -o /usr/local/bin/fluxctl && \
-sudo chmod +x /usr/local/bin/fluxctl
-
-# clean up
-sudo apt-get autoremove -y
-sudo apt-get clean -y
