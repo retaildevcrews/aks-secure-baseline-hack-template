@@ -26,11 +26,14 @@
 - Create a new `Codespace` in this repo
   - If the `fork option` appears, you need to request permission to the repo
   - Do not choose fork
+- If you are not using Codespaces, ask your coach for this value
+  - `export ASB_TENANT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
 
 ```bash
 
+
 # login to the Azure subscription for the hack
-az login -t 12d1a0e5-9d0a-4b24-9810-5d718de78502
+az login -t $ASB_TENANT_ID
 
 # verify the correct subscription - bartr-cloudatx-asb
 az account show
