@@ -1,7 +1,5 @@
 {
-	"name": "k8s-qs",
-	"image": "ghcr.io/retaildevcrews/kind",
-	"runArgs": ["--init", "--privileged"],
+	"name": "ASB-Hack",
 	"overrideCommand": false,
 
 	// Set *default* container specific settings.json values on container create.
@@ -9,9 +7,9 @@
 		"terminal.integrated.shell.linux": "/bin/bash"
 	},
 
-	"remoteUser": "akdc",
+	"remoteUser": "vscode",
 
-	"forwardPorts": [30000, 30080, 30088, 32000],
+	"forwardPorts": [],
 
 	// Install extensions
 	"extensions": [
