@@ -1,6 +1,10 @@
 {
 	"name": "ASB-Hack",
 	"build": { "dockerfile": "Dockerfile" },
+	"runArgs": [
+		"--init",
+		"--privileged"
+	],
 	// "image": "ghcr.io/retaildevcrews/asb:latest",
 	"overrideCommand": false,
 
