@@ -56,10 +56,13 @@ az monitor log-analytics workspace delete -y --force true -g $ASB_HUB_RG -n $ASB
 # delete AAD group
 az ad group delete -g $ASB_AADOBJECTNAME_GROUP_CLUSTERADMIN
 
-# delete from .kube/config
-kubectl config delete-context $ASB_TEAM_NAME
-
 # delete the resource groups
 az group delete -y --no-wait -g $ASB_CORE_RG
 az group delete -y --no-wait -g $ASB_HUB_RG
 az group delete -y --no-wait -g $ASB_SPOKE_RG
+
+echo "run az group list -o table | grep $ASB_TEAM_NAME to check progress"
+
+# delete from .kube/config
+### you can ignore any errors
+kubectl config delete-context $ASB_TEAM_NAME
