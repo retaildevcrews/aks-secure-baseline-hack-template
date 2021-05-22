@@ -161,6 +161,9 @@ export ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_RESOURCE_ID=$(az deployment group show
 export ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_CLIENT_ID=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityClientId.value -o tsv)
 export ASB_POD_MI_ID=$(az identity show -n podmi-ingress-controller -g $ASB_CORE_RG --query principalId -o tsv)
 
+# save env vars
+./saveenv.sh -y
+
 az keyvault set-policy --certificate-permissions get --object-id $ASB_POD_MI_ID -n $ASB_CERT_KV_NAME
 az keyvault set-policy --secret-permissions get --object-id $ASB_POD_MI_ID -n $ASB_CERT_KV_NAME
 
@@ -174,5 +177,8 @@ cat templates/ngsa-ingress.yaml | envsubst  > gitops/ngsa/ngsa-ingress.yaml
 rm -f flux.yaml
 cat templates/flux.yaml | envsubst  > flux.yaml
 
-# save env vars
-./saveenv.sh -y
+# get AKS credentials
+az aks get-credentials -g $ASB_CORE_RG -n $ASB_AKS_CLUSTER_NAME
+
+# rename context for simplicity
+kubectl config rename-context $ASB_AKS_CLUSTER_NAME $ASB_TEAM_NAME
