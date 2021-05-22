@@ -1,5 +1,9 @@
 #!/bin/sh
 
+pwd >> status
+echo $USER >> status
+echo $USERNAME >> status
+
 exit 0
 
 # create directories
