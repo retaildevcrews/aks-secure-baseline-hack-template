@@ -40,7 +40,7 @@ git config --global core.pager more
 
 # install tools
 sudo apt-get update
-sudo apt-get -y install --no-install-recommends httpie jq bash-completion curl git wget nano kubectl
+sudo apt-get -y install --no-install-recommends httpie jq bash-completion curl git wget nano kubectl docker-completion
 
 # install k9s
 curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz
