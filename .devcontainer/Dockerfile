@@ -11,11 +11,11 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     sudo apt-get clean -y
 
 # install k9s
-RUN curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz && \
-    mkdir k9s && \
-    tar xvzf k9s.tar.gz -C ./k9s && \
+RUN sudo curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz && \
+    sudo mkdir k9s && \
+    sudo tar xvzf k9s.tar.gz -C ./k9s && \
     sudo mv ./k9s/k9s /usr/local/bin/k9s && \
-    rm -rf k9s.tar.gz k9s
+    sudo rm -rf k9s.tar.gz k9s
 
 # install jp
 RUN VERSION=$(curl -i https://github.com/jmespath/jp/releases/latest | grep "location: https://github.com/" | rev | cut -f 1 -d / | rev | sed 's/\r//') && \
