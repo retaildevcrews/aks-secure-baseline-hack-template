@@ -18,7 +18,7 @@ cd $(dirname $0)
 export ASB_TEAM_NAME=$1
 
 # location
-ASB_LOCATION=eastus2
+ASB_LOCATION=southcentralus
 ASB_GEO_LOCATION=centralus
 
 # github info for flux
