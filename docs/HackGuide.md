@@ -1,30 +1,33 @@
 # ASB Hack Guide
 
-> This is an early draft
+> DRAFT
 
 ## Setup
 
 ### Process
 
 - Identify Coaches
-  - Questions will come up
+  - Questions will come up especially during `Challenges`
 - Challenge Ideas
   - Overview presentation and first setup takes most of a day
   - What's next?
   - Some teams will come up with their own ideas
   - There is a /challenges folder
     - Check in WIP
+    - Encourage early PRs
+    - Do NOT check in cluster config files!
 - Stand ups
   - We generally do two stand ups / day
   - Demos at the afternoon stand up!
 - Retros
-  - We suggest 30 minutes of challenge demos
+  - We suggest 30 minutes of `Challenge` demos
   - 30 minutes of retro
 
 ### Azure Subscription
 
 - You need an Azure Subscription with AAD permissions
 - This will not currently work in an AIRS subscription
+  - We're working on getting it to work ...
 - Create an AAD hack group
   - Grant AAD User Admin permissions
   - Grant Azure Subscription Contributor permissions
@@ -35,7 +38,8 @@
   - Public IPs default to 100 and each cluster needs 4 PIPs
   - Each cluster deploys 5 VMs
   - Make sure you have quota and budget
-    - We suggest 2 clusters / attendee quota
+    - We suggest 1.5-2 clusters / attendee quota
+    - Encourage deleting unused resources
 
 ### Repo Setup
 
@@ -44,11 +48,13 @@
 - Make sure your org has GitHub Codespaces access
 - Add users to GitHub org
 - Grant write priveleges to repo
+- Validate Codespaces access before hack
+  - Some people may start early - keep content simple until hack starts
 
 ### Communication Setup
 
 - Setup Teams or use GitHub Discussions
-  - Most hacks will have multiple smaller breakout teams
+  - Most hacks will have multiple, smaller breakout teams
   - Add coaches to breakout teams
 
 ### Prerequisites
@@ -66,26 +72,32 @@
 - Review `Working Agreement` and `Code of Conduct`
 - AKS Secure Baseline Overview and Architecture
   - We used the PnP repo and Azure Portal of a deployed cluster
+  - Plan for a lot of questions
 - Break into teams of 4-6
   - Each team deploys an ASB cluster
     - We used colors
     - It needs to be short for ASB_TEAM_NAME
     - red1, blue1, green1 ...
-- Stand Up and Planning
-  - Stand up
+  - One person should drive the entire initial setup
+    - Do not try to switch off in the middle the first time
+- Stand Up and Challenge Planning
+  - Stand up - especially blockers
   - Encourage attendees to clean up unused clusters
   - Plan Challenge Teams
     - We let attendees self-select
     - 2-5 seems ideal
-    - Coaches support
+    - Coaches support, so not too many teams
 
 ### Day 2+ Agenda
 
 - Stand up
   - Make sure everyone is on a challenge team
+  - Deal with blockers
 - Hack on Challenges
+  - If blocked, ask for help!
 - Stand up
   - Demos
+  - Deal with blockers
   - Adjust / create new challenge teams
   - Encourage attendees to clean up unused clusters
 
@@ -110,8 +122,8 @@
     - This avoids copy-paste errors
 - Beware `soft deletes`
   - Deployment will fail if the name is reused and a soft delete exists
-  - Make sure to run `./cleanup.sh`
-  - Partial deploys have to be deleted by hand
+  - Make sure to run `./cleanup.sh teamName`
+  - Partial deploys may have to be deleted by hand
   - Soft deleted key vaults are easy to purge from the portal
   - Soft deleted Log Analytics Workspaces are not
 - One person should drive the entire initial setup
