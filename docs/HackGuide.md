@@ -21,6 +21,8 @@
     - Do NOT check in cluster config files!
 - Stand ups
   - We generally do two stand ups / day
+    - Keep them short and focused
+    - For a large hack, consider team leads and scrum of scrums
   - Demos at the afternoon stand up!
 - Retros
   - We suggest 30 minutes of `Challenge` demos
