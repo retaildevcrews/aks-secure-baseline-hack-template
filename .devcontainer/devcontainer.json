@@ -1,10 +1,7 @@
 {
 	"name": "ASB-Hack",
 	"build": { "dockerfile": "Dockerfile" },
-	"runArgs": [
-		"--init",
-		"--privileged"
-	],
+	"runArgs": [ "--init", "--privileged" ],
 	"overrideCommand": false,
 
 	// Set *default* container specific settings.json values on container create.
@@ -23,5 +20,5 @@
 	],
 
 	// Run Bash script in .devcontainer directory
-	"postCreateCommand": "/bin/bash ./.devcontainer/post-install.sh"
+	"postCreateCommand": "/bin/bash .devcontainer/post-install.sh"
 }
