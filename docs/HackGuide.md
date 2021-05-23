@@ -40,6 +40,13 @@
   - Make sure you have quota and budget
     - We suggest 1.5-2 clusters / attendee quota
     - Encourage deleting unused resources
+- Domain / cert
+  - Register a TLD in the subscription
+  - Add a wildcard cert
+    - Store in Key Vault
+  - Setup DNS
+    - By default, DNS is locked so the A records can't be deleted
+  - We use the `TLD` resource group
 
 ### Repo Setup
 
