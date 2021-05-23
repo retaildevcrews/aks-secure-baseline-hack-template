@@ -7,7 +7,6 @@ mkdir -p $HOME/bin
 mkdir -p $HOME/.local/bin
 mkdir -p $HOME/.k9s
 mkdir -p $HOME/go/src
-mkdir -p $HOME/.local
 mkdir -p $HOME/.dotnet/tools
 
 # add to .bashrc
