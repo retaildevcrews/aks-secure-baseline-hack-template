@@ -1,11 +1,11 @@
 FROM mcr.microsoft.com/vscode/devcontainers/universal:1
 
 # debugging commands
-RUN echo $HOME && \
-    echo $USER  && \
-    echo $USERNAME  && \
-    PWD  && \
-    whoami
+RUN echo $HOME | sudo tee status && \
+    echo $USER | sudo tee status  && \
+    echo $USERNAME | sudo tee status  && \
+    PWD | sudo tee status  && \
+    whoami | sudo tee status
 
 # install packages
 RUN export DEBIAN_FRONTEND=noninteractive && \
