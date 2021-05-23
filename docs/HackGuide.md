@@ -28,6 +28,16 @@
 - You need an Azure Subscription with AAD permissions
 - This will not currently work in an AIRS subscription
   - We're working on getting it to work ...
+- Domain / cert
+  - Register a TLD in the subscription
+  - Add a wildcard cert
+    - Store in Key Vault
+  - Setup DNS
+    - By default, DNS is locked so the A records can't be deleted
+  - We use the `TLD` resource group
+- Consider creating an AAD tenant just for the hack
+  - After the hack, use your real tenant
+  - We haven't fully tested this yet but it seems like a best practice
 - Create an AAD hack group
   - Grant AAD User Admin permissions
   - Grant Azure Subscription Contributor permissions
@@ -40,13 +50,6 @@
   - Make sure you have quota and budget
     - We suggest 1.5-2 clusters / attendee quota
     - Encourage deleting unused resources
-- Domain / cert
-  - Register a TLD in the subscription
-  - Add a wildcard cert
-    - Store in Key Vault
-  - Setup DNS
-    - By default, DNS is locked so the A records can't be deleted
-  - We use the `TLD` resource group
 
 ### Repo Setup
 
