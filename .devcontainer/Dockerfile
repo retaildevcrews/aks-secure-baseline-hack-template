@@ -1,11 +1,11 @@
 FROM mcr.microsoft.com/vscode/devcontainers/universal:1
 
 # debugging commands
-RUN echo $HOME >> status && \
-    echo $USER >> status && \
-    echo $USERNAME >> status && \
-    PWD >> status && \
-    whoami >> status
+RUN echo $HOME && \
+    echo $USER  && \
+    echo $USERNAME  && \
+    PWD  && \
+    whoami
 
 # install packages
 RUN export DEBIAN_FRONTEND=noninteractive && \
