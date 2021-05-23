@@ -8,15 +8,16 @@
 
 ### Process
 
-- Identify Coaches
+- Recruit Coaches
   - Questions will come up especially during `Challenges`
-- Challenge Ideas
+- `Challenges` Concept
   - Overview presentation and first setup takes most of a day
-  - What's next?
+    - What's next?
+  - Readme contains a list of ideas
   - Some teams will come up with their own ideas
   - There is a /challenges folder
-    - Check in WIP
-    - Encourage early PRs
+    - Check in work in-progress
+      - Encourage early PRs
     - Do NOT check in cluster config files!
 - Stand ups
   - We generally do two stand ups / day
