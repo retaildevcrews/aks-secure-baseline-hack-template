@@ -1,5 +1,12 @@
 FROM mcr.microsoft.com/vscode/devcontainers/universal:1
 
+# debugging commands
+RUN echo $HOME >> /home/codespace/status && \
+    echo $USER >> /home/codespace/status && \
+    echo $USERNAME >> /home/codespace/status && \
+    PWD >> /home/codespace/status && \
+    whoami >> /home/codespace/status
+
 # install packages
 RUN export DEBIAN_FRONTEND=noninteractive && \
     sudo apt-get update && \
