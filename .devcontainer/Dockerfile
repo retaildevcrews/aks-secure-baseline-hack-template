@@ -21,7 +21,7 @@ RUN sudo curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download
     kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null && \
     sudo curl -L https://github.com/fluxcd/flux/releases/download/1.14.2/fluxctl_linux_amd64 -o /usr/local/bin/fluxctl && \
     sudo chmod +x /usr/local/bin/fluxctl && \
-    sudo apt install -f
+    sudo apt-get install -f
 
 # create directories and update .bashrc
 RUN mkdir -p $HOME/.ssh && \
