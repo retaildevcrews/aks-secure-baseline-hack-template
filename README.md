@@ -119,11 +119,11 @@ git push
 ```bash
 
 ### repeat for each of the other members of your team
-az ad group member add -g $ASB_AADOBJECTID_GROUP_CLUSTERADMIN --member-id $(az ad user show --query objectId -o tsv --id \
-changeThisForEachTeamMember@${ASB_TENANTDOMAIN_K8SRBAC})
+az ad group member add -g $ASB_CLUSTER_ADMIN_GROUP --member-id $(az ad user show --query objectId -o tsv --id \
+changeThisForEachTeamMember@${ASB_TENANT_TLD})
 
 # list users
-az ad group member list -g $ASB_AADOBJECTID_GROUP_CLUSTERADMIN  --query [].mailNickname -o table
+az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o table
 
 ```
 
@@ -132,10 +132,10 @@ az ad group member list -g $ASB_AADOBJECTID_GROUP_CLUSTERADMIN  --query [].mailN
 ```bash
 
 # get AKS credentials
-az aks get-credentials -g $ASB_CORE_RG -n $ASB_AKS_CLUSTER_NAME
+az aks get-credentials -g $ASB_RG_CORE -n $ASB_AKS_NAME
 
 # rename context for simplicity
-kubectl config rename-context $ASB_AKS_CLUSTER_NAME $ASB_TEAM_NAME
+kubectl config rename-context $ASB_RG_CORE $ASB_TEAM_NAME
 
 # check the nodes
 # requires Azure login
@@ -231,7 +231,7 @@ kubectl get pods -A
 az group list -o table | grep $ASB_TEAM_NAME
 
 ### sometimes the spokes group has to be deleted twice
-az group delete -y --no-wait -g $ASB_SPOKE_RG
+az group delete -y --no-wait -g $ASB_RG_SPOKE
 
 ```
 
@@ -268,14 +268,14 @@ Here are some ideas for `next steps`
 ```bash
 
 # stop your cluster
-az aks stop --no-wait -n $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
-az aks show -n $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
+az aks stop --no-wait -n $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
+az aks show -n $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
 
 # start your cluster
-az aks start --no-wait --name $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
-az aks show -n $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
+az aks start --no-wait --name $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
+az aks show -n $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
 
 # disable policies (last resort for debugging)
-az aks disable-addons --addons azure-policy -g rg-bu0001a0008-$ASB_TEAM_NAME -n $ASB_AKS_CLUSTER_NAME
+az aks disable-addons --addons azure-policy -g rg-bu0001a0008-$ASB_TEAM_NAME -n $ASB_AKS_NAME
 
 ```
