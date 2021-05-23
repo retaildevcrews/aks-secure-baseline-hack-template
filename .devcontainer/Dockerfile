@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/universal:1
 RUN echo $HOME | sudo tee status && \
     echo $USER | sudo tee status  && \
     echo $USERNAME | sudo tee status  && \
-    PWD | sudo tee status  && \
+    pwd | sudo tee status  && \
     whoami | sudo tee status
 
 # install packages
