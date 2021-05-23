@@ -55,6 +55,8 @@
 
 - Clone (not fork) this repo
 - Set the `ASB_TENANT_ID` repo secret to your Azure Subscription Tenant ID
+- Set branch protection rule on `main`
+  - Make sure not to merge a PR with the cluster generated files into `main`
 - Make sure your org has GitHub Codespaces access
 - Add users to GitHub org
 - Grant write priveleges to repo
