@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # teamName is required
 if [ -z "$1" ]
 then
@@ -122,6 +124,9 @@ fi
 # export AAD env vars
 export ASB_TENANT_ID=$(az account show --query tenantId -o tsv)
 
+# continue on error
+set +e
+
 # create AAD cluster admin group
 export ASB_CLUSTER_ADMIN_ID=$(az ad group create --display-name $ASB_CLUSTER_ADMIN_GROUP --mail-nickname $ASB_CLUSTER_ADMIN_GROUP --description "Principals in this group are cluster admins on the cluster." --query objectId -o tsv)
 
@@ -129,10 +134,10 @@ export ASB_CLUSTER_ADMIN_ID=$(az ad group create --display-name $ASB_CLUSTER_ADM
 # you can ignore the exists error
 az ad group member add -g $ASB_CLUSTER_ADMIN_ID --member-id $(az ad signed-in-user show --query objectId -o tsv)
 
+set -e
+
 # get *.onmicrosoft.com domain
 export ASB_TENANT_TLD=$(az ad signed-in-user show --query 'userPrincipalName' -o tsv | cut -d '@' -f 2 | sed 's/\"//')
-
-set -e
 
 # create the resource groups
 az group create -n $ASB_RG_HUB -l $ASB_LOCATION
