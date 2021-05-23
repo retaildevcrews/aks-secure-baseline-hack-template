@@ -49,17 +49,62 @@
   - Most hacks will have multiple smaller breakout teams
   - Add coaches to breakout teams
 
+## Execution
+
+> Duration: 3-4 days is adequate time to go deeper via `Challenges`
+
+### Day 1 Agenda
+
+- Intros
+- Validate and resolve access
+- Review `Working Agreement` and `Code of Conduct`
+- AKS Secure Baseline Overview and Architecture
+  - We used the PnP repo and Azure Portal of a deployed cluster
+- Break into teams of 4-6
+  - Each team deploys ASB
+- Stand Up and Planning
+  - Stand up
+  - Encourage attendees to clean up unused clusters
+  - Plan Challenge Teams
+    - We let attendees self-select
+    - 2-5 seems ideal
+    - Coaches support
+
+### Day 2+ Agenda
+
+- Stand up
+  - Make sure everyone is on a challenge team
+- Hack on Challenges
+- Stand up
+  - Demos
+  - Adjust / create new challenge teams
+  - Encourage attendees to clean up unused clusters
+
+### Day n Agenda
+
+- Finish demos
+- PR work into main branch (/challenges directory)
+- Clean up unused clusters
+- Demos, demos, demos
+- Retrospective
+
 ### Tips
 
 - Tightly couple `teams` to `branches`
   - GitOps is really challenging otherwise
-  - The name really is picky ...
+  - The ASB_TEAM_NAME really is picky ...
   - Do NOT merge team (cluster) branches into main
     - There are 5 files that are generated and should never be in main
 - Open the `readme` in a browser on GitHub
   - This gives you a copy button for the fences
     - Codespaces does not
     - This avoids copy-paste errors
+- Beware `soft deletes`
+  - Deployment will fail if the name is reused and a soft delete exists
+  - Make sure to run `./cleanup.sh`
+  - Partial deploys have to be deleted by hand
+  - Soft deleted key vaults are easy to purge from the portal
+  - Soft delete Log Analytics Workspaces are not
 - One person should drive the entire initial setup
   - Do not try to switch off in the middle the first time
 - Once setup, everything the other team members need is in the team branch
