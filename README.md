@@ -78,7 +78,17 @@ git push -u origin $ASB_TEAM_NAME
 
 > This takes 45 - 60 minutes to complete
 
-Optionally, you can open setup.sh and run the commands interactively to see what is happening
+Optional: change the location of the cluster
+
+```bash
+
+# default location
+export ASB_LOCATION=eastus2
+export ASB_GEO_LOCATION=centralus
+
+```
+
+Run setup
 
 ```bash
 

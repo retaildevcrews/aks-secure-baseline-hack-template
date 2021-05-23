@@ -35,10 +35,11 @@ fi
 export ASB_TLD=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
 
 # set default shared cert values
-if [ -z "$ASB_CERT_KV_NAME" ]
+if [ -z "$ASB_KV_NAME" ]
 then
-  export ASB_CERT_KV_NAME=kv-tld
+  export ASB_KV_NAME=kv-tld
 fi
+
 if [ -z "$ASB_CERT_NAME" ]
 then
   export ASB_CERT_NAME=aks-sb
@@ -64,20 +65,37 @@ then
   exit 1
 fi
 
-# github info for flux
-export ASB_GIT_REPO=$(git remote -v | cut -f 2 | cut -f 1 -d " " | head -n 1)
-
-if [ -z "$ASB_GIT_REPO" ]
+# AAD admin group name
+if [ -z "$ASB_CLUSTER_ADMIN_GROUP" ]
 then
-  echo Please cd to an ASB git repo
-  exit 1
+  export ASB_CLUSTER_ADMIN_GROUP=cluster-admins-$ASB_TEAM_NAME
 fi
 
-export ASB_GIT_PATH=gitops
-export ASB_GIT_BRANCH=$(git status  --porcelain --branch | head -n 1 | cut -f 2 -d " " | cut -f 1 -d .)
+# github info for flux
+if [ -z "$ASB_GIT_REPO" ]
+then
+  export ASB_GIT_REPO=$(git remote -v | cut -f 2 | cut -f 1 -d " " | head -n 1)
+
+  if [ -z "$ASB_GIT_REPO" ]
+  then
+    echo Please cd to an ASB git repo
+    exit 1
+  fi
+fi
+
+if [ -z "$ASB_GIT_PATH" ]
+then
+  export ASB_GIT_PATH=gitops
+fi
+
+if [ -z "$ASB_GIT_BRANCH" ]
+then
+  export ASB_GIT_BRANCH=$(git status  --porcelain --branch | head -n 1 | cut -f 2 -d " " | cut -f 1 -d .)
+fi
+
 
 # don't allow main branch
-if [ "main" == "$ASB_GIT_BRANCH" ]
+if [ -z "$ASB_GIT_BRANCH" ] || [ "main" == "$ASB_GIT_BRANCH" ]
 then
   echo Please create a branch for this cluster
   echo See readme for instructions
@@ -85,43 +103,54 @@ then
 fi
 
 # resource group names
-export ASB_CORE_RG=rg-${ASB_TEAM_NAME}-core
-export ASB_HUB_RG=rg-${ASB_TEAM_NAME}-networking-hubs
-export ASB_SPOKE_RG=rg-${ASB_TEAM_NAME}-networking-spokes
+if [ -z "$ASB_RG_CORE" ]
+then
+  export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
+fi
+
+if [ -z "$ASB_RG_HUB" ]
+then
+  export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hubs
+fi
+
+if [ -z "$ASB_RG_SPOKE" ]
+then
+  export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spokes
+fi
+
 
 # export AAD env vars
-export ASB_TENANTID_K8SRBAC=$(az account show --query tenantId -o tsv)
-export ASB_AADOBJECTNAME_GROUP_CLUSTERADMIN=cluster-admins-$ASB_TEAM_NAME
+export ASB_TENANT_ID=$(az account show --query tenantId -o tsv)
 
 # create AAD cluster admin group
-export ASB_AADOBJECTID_GROUP_CLUSTERADMIN=$(az ad group create --display-name $ASB_AADOBJECTNAME_GROUP_CLUSTERADMIN --mail-nickname $ASB_AADOBJECTNAME_GROUP_CLUSTERADMIN --description "Principals in this group are cluster admins on the cluster." --query objectId -o tsv)
+export ASB_CLUSTER_ADMIN_ID=$(az ad group create --display-name $ASB_CLUSTER_ADMIN_GROUP --mail-nickname $ASB_CLUSTER_ADMIN_GROUP --description "Principals in this group are cluster admins on the cluster." --query objectId -o tsv)
 
 # add current user to cluster admin group
 # you can ignore the exists error
-az ad group member add -g $ASB_AADOBJECTID_GROUP_CLUSTERADMIN --member-id $(az ad signed-in-user show --query objectId -o tsv)
+az ad group member add -g $ASB_CLUSTER_ADMIN_ID --member-id $(az ad signed-in-user show --query objectId -o tsv)
 
 # get *.onmicrosoft.com domain
-export ASB_TENANTDOMAIN_K8SRBAC=$(az ad signed-in-user show --query 'userPrincipalName' -o tsv | cut -d '@' -f 2 | sed 's/\"//')
+export ASB_TENANT_TLD=$(az ad signed-in-user show --query 'userPrincipalName' -o tsv | cut -d '@' -f 2 | sed 's/\"//')
 
 set -e
 
 # create the resource groups
-az group create -n $ASB_HUB_RG -l $ASB_LOCATION
-az group create -n $ASB_SPOKE_RG -l $ASB_LOCATION
-az group create -n $ASB_CORE_RG -l $ASB_LOCATION
+az group create -n $ASB_RG_HUB -l $ASB_LOCATION
+az group create -n $ASB_RG_SPOKE -l $ASB_LOCATION
+az group create -n $ASB_RG_CORE -l $ASB_LOCATION
 
 # save env vars
 ./saveenv.sh -y
 
 # deploy the network
-az deployment group create -g $ASB_HUB_RG -f networking/hub-default.json -p location=${ASB_LOCATION}
-export ASB_RESOURCEID_VNET_HUB=$(az deployment group show -g $ASB_HUB_RG -n hub-default --query properties.outputs.hubVnetId.value -o tsv)
+az deployment group create -g $ASB_RG_HUB -f networking/hub-default.json -p location=${ASB_LOCATION}
+export ASB_VNET_HUB_ID=$(az deployment group show -g $ASB_RG_HUB -n hub-default --query properties.outputs.hubVnetId.value -o tsv)
 
-az deployment group create -g $ASB_SPOKE_RG -f networking/spoke-BU0001A0008.json -p location=${ASB_LOCATION} hubVnetResourceId="${ASB_RESOURCEID_VNET_HUB}"
-export ASB_RESOURCEID_SUBNET_NODEPOOLS=$(az deployment group show -g $ASB_SPOKE_RG -n spoke-BU0001A0008 --query properties.outputs.nodepoolSubnetResourceIds.value -o tsv)
+az deployment group create -g $ASB_RG_SPOKE -f networking/spoke-BU0001A0008.json -p location=${ASB_LOCATION} hubVnetResourceId="${ASB_VNET_HUB_ID}"
+export ASB_NODEPOOLS_SUBNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n spoke-BU0001A0008 --query properties.outputs.nodepoolSubnetResourceIds.value -o tsv)
 
-az deployment group create -g $ASB_HUB_RG -f networking/hub-regionA.json -p location=${ASB_LOCATION} nodepoolSubnetResourceIds="['${ASB_RESOURCEID_SUBNET_NODEPOOLS}']"
-export ASB_RESOURCEID_VNET_CLUSTERSPOKE=$(az deployment group show -g $ASB_SPOKE_RG -n spoke-BU0001A0008 --query properties.outputs.clusterVnetResourceId.value -o tsv)
+az deployment group create -g $ASB_RG_HUB -f networking/hub-regionA.json -p location=${ASB_LOCATION} nodepoolSubnetResourceIds="['${ASB_NODEPOOLS_SUBNET_ID}']"
+export ASB_SPOKE_VNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n spoke-BU0001A0008 --query properties.outputs.clusterVnetResourceId.value -o tsv)
 
 # create ARM template
 rm -f cluster-${ASB_TEAM_NAME}.json
@@ -129,43 +158,43 @@ rm -f cluster-${ASB_TEAM_NAME}.json
 cat templates/cluster-stamp.json | envsubst '$ASB_TEAM_NAME,$ASB_DNS_ZONE,$ASB_TLD' > cluster-${ASB_TEAM_NAME}.json
 
 # grant executer permission to the key vault
-az keyvault set-policy --certificate-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_CERT_KV_NAME -g TLD
-az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_CERT_KV_NAME -g TLD
+az keyvault set-policy --certificate-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
+az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
 
 # create AKS
-az deployment group create -g $ASB_CORE_RG \
+az deployment group create -g $ASB_RG_CORE \
   -f  cluster-${ASB_TEAM_NAME}.json \
   -p  location=${ASB_LOCATION} \
       geoRedundancyLocation=${ASB_GEO_LOCATION} \
       asbTeamName=${ASB_TEAM_NAME} \
-      targetVnetResourceId=${ASB_RESOURCEID_VNET_CLUSTERSPOKE} \
-      clusterAdminAadGroupObjectId=${ASB_AADOBJECTID_GROUP_CLUSTERADMIN} \
-      k8sControlPlaneAuthorizationTenantId=${ASB_TENANTID_K8SRBAC} \
-      appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_CERT_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n') \
-      aksIngressControllerCertificate=$(az keyvault certificate show --vault-name $ASB_CERT_KV_NAME -n $ASB_CERT_NAME --query "cer" -o tsv | base64 | tr -d '\n')
+      targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
+      clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
+      k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
+      appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n') \
+      aksIngressControllerCertificate=$(az keyvault certificate show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "cer" -o tsv | base64 | tr -d '\n')
 
 # Remove user's permissions from shared keyvault. It is no longer needed after this step.
-az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_CERT_KV_NAME
+az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME
 
 # get cluster name
-export ASB_AKS_CLUSTER_NAME=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
+export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
 
 # Get the public IP of our App gateway
-export ASB_AKS_PIP=$(az network public-ip show -g $ASB_SPOKE_RG --name pip-BU0001A0008-00 --query ipAddress -o tsv)
+export ASB_AKS_PIP=$(az network public-ip show -g $ASB_RG_SPOKE --name pip-BU0001A0008-00 --query ipAddress -o tsv)
 
 # Add "A" record for the app gateway IP to the public DNS Zone
 az network dns record-set a add-record -a $ASB_AKS_PIP -n $ASB_TEAM_NAME -g TLD -z aks-sb.com
 
 # Get the AKS Ingress Controller Managed Identity details.
-export ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_RESOURCE_ID=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityResourceId.value -o tsv)
-export ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_CLIENT_ID=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityClientId.value -o tsv)
-export ASB_POD_MI_ID=$(az identity show -n podmi-ingress-controller -g $ASB_CORE_RG --query principalId -o tsv)
+export ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_RESOURCE_ID=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityResourceId.value -o tsv)
+export ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_CLIENT_ID=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityClientId.value -o tsv)
+export ASB_POD_MI_ID=$(az identity show -n podmi-ingress-controller -g $ASB_RG_CORE --query principalId -o tsv)
 
 # save env vars
 ./saveenv.sh -y
 
-az keyvault set-policy --certificate-permissions get --object-id $ASB_POD_MI_ID -n $ASB_CERT_KV_NAME
-az keyvault set-policy --secret-permissions get --object-id $ASB_POD_MI_ID -n $ASB_CERT_KV_NAME
+az keyvault set-policy --certificate-permissions get --object-id $ASB_POD_MI_ID -n $ASB_KV_NAME
+az keyvault set-policy --secret-permissions get --object-id $ASB_POD_MI_ID -n $ASB_KV_NAME
 
 # config traefik
 rm -f gitops/ingress/02-traefik-config.yaml
@@ -178,7 +207,7 @@ rm -f flux.yaml
 cat templates/flux.yaml | envsubst  > flux.yaml
 
 # get AKS credentials
-az aks get-credentials -g $ASB_CORE_RG -n $ASB_AKS_CLUSTER_NAME
+az aks get-credentials -g $ASB_RG_CORE -n $ASB_AKS_NAME
 
 # rename context for simplicity
-kubectl config rename-context $ASB_AKS_CLUSTER_NAME $ASB_TEAM_NAME
+kubectl config rename-context $ASB_AKS_NAME $ASB_TEAM_NAME
