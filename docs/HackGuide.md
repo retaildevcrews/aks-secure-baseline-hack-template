@@ -141,6 +141,9 @@
   - Partial deploys may have to be deleted by hand
   - Soft deleted key vaults are easy to purge from the portal
   - Soft deleted Log Analytics Workspaces are not
+- ASB uses a number of preview features
+  - Sometimes, these change and things break
+  - Make sure to understand the preview features in use
 - One person should drive the entire initial setup
   - Do not try to switch off in the middle the first time
 - Once setup, everything the other team members need is in the team branch
