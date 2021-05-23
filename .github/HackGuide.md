@@ -18,7 +18,7 @@
   - We generally do two stand ups / day
   - Demos at the afternoon stand up!
 - Retros
-  - We had 30 minutes of challenge demos
+  - We suggest 30 minutes of challenge demos
   - 30 minutes of retro
 
 ### Azure Subscription
@@ -32,8 +32,10 @@
   - Add to AAD hack group
   - Email login info and validate Azure access before hack starts
 - Check Azure Quotas and increase if needed
-  - Public IPs defaults to 100 and each cluster needs 4 PIPs
+  - Public IPs default to 100 and each cluster needs 4 PIPs
   - Each cluster deploys 5 VMs
+  - Make sure you have quota and budget
+    - We suggest 2 clusters / attendee quota
 
 ### Repo Setup
 
@@ -41,7 +43,7 @@
 - Set the `ASB_TENANT_ID` repo secret to your Azure Subscription Tenant ID
 - Make sure your org has GitHub Codespaces access
 - Add users to GitHub org
-- Grant write privelege to repo
+- Grant write priveleges to repo
 
 ### Communication Setup
 
@@ -49,14 +51,18 @@
   - Most hacks will have multiple smaller breakout teams
   - Add coaches to breakout teams
 
+### Prerequisites
+
+- Working knowledge of Docker, k8s and AKS
+
 ## Execution
 
-> Duration: 3-4 days is adequate time to go deeper via `Challenges`
+> Duration: 3-4 days is a good estimate to go deeper via `Challenges`
 
 ### Day 1 Agenda
 
 - Intros
-- Validate and resolve access
+- Validate and resolve access issues
 - Review `Working Agreement` and `Code of Conduct`
 - AKS Secure Baseline Overview and Architecture
   - We used the PnP repo and Azure Portal of a deployed cluster
