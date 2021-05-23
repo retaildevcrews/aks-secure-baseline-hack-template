@@ -62,6 +62,11 @@
 - Grant write priveleges to repo
 - Validate Codespaces access before hack
   - Some people may start early - keep content simple until hack starts
+- Setup is currently done via `setup.sh`
+  - We do this to make maintenance easier
+  - You can copy the commands into readme.md `fences` if you want to do step-by-step
+    - Open the GitHub repo in a browser and you'll get a copy button for each fence
+    - Codespaces does not have the copy button and hackers make a lot of copy-paste mistakes
 
 ### Communication Setup
 
