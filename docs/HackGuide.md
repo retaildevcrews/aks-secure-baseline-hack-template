@@ -1,8 +1,10 @@
 # ASB Hack Guide
 
-> DRAFT
+## Pre-Hack
 
-## Setup
+### Attendee Prerequisites
+
+- Working knowledge of Docker, k8s and AKS
 
 ### Process
 
@@ -76,10 +78,6 @@
   - We used `Teams Chats` (not channels) and it worked well
   - Encourage everyone to use the `Join` button and work `in the open`
   - Allows coaches to `drop in`
-
-### Prerequisites
-
-- Working knowledge of Docker, k8s and AKS
 
 ## Execution
 
