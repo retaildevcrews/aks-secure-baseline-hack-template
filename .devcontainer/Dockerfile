@@ -23,7 +23,7 @@ RUN sudo curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download
     sudo chmod +x /usr/local/bin/fluxctl && \
     sudo apt-get install -f
 
-# create directories and update .bashrc
+# create directories, update .bashrc, config git
 RUN mkdir -p $HOME/.ssh && \
     mkdir -p $HOME/.kube && \
     mkdir -p $HOME/bin && \
