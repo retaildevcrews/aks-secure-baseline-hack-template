@@ -67,7 +67,10 @@
 - AKS Secure Baseline Overview and Architecture
   - We used the PnP repo and Azure Portal of a deployed cluster
 - Break into teams of 4-6
-  - Each team deploys ASB
+  - Each team deploys an ASB cluster
+    - We used colors
+    - It needs to be short for ASB_TEAM_NAME
+    - red1, blue1, green1 ...
 - Stand Up and Planning
   - Stand up
   - Encourage attendees to clean up unused clusters
@@ -110,7 +113,7 @@
   - Make sure to run `./cleanup.sh`
   - Partial deploys have to be deleted by hand
   - Soft deleted key vaults are easy to purge from the portal
-  - Soft delete Log Analytics Workspaces are not
+  - Soft deleted Log Analytics Workspaces are not
 - One person should drive the entire initial setup
   - Do not try to switch off in the middle the first time
 - Once setup, everything the other team members need is in the team branch
