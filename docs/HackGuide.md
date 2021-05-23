@@ -68,6 +68,9 @@
 - Setup Teams or use GitHub Discussions
   - Most hacks will have multiple, smaller breakout teams
   - Add coaches to breakout teams
+  - We used `Teams Chats` (not channels) and it worked well
+  - Encourage everyone to use the `Join` button and work `in the open`
+  - Allows coaches to `drop in`
 
 ### Prerequisites
 
