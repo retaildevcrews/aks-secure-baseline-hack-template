@@ -76,9 +76,7 @@ git push -u origin $ASB_TEAM_NAME
 
 ### Setup AKS Secure Baseline
 
-> This takes 45 - 60 minutes to complete
-
-Optional: change the location of the cluster
+#### Optional: change the location of the cluster
 
 ```bash
 
@@ -88,7 +86,9 @@ export ASB_GEO_LOCATION=centralus
 
 ```
 
-Run setup
+#### Run setup
+
+> This takes 45 - 60 minutes to complete
 
 ```bash
 
