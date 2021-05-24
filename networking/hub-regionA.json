@@ -765,7 +765,6 @@
                                             "ghcr.io",
                                             "*.ghcr.io",
                                             "*.githubusercontent.com"
-
                                         ],
                                         "targetUrls": [],
                                         "terminateTLS": false,
