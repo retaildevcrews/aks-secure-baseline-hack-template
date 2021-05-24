@@ -76,9 +76,21 @@ git push -u origin $ASB_TEAM_NAME
 
 ### Setup AKS Secure Baseline
 
-> This takes 45 - 60 minutes to complete
+#### Optional: change the location of the cluster
 
-Optionally, you can open setup.sh and run the commands interactively to see what is happening
+You may check [AKS availability in your region](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=kubernetes-service&regions=all)
+
+```bash
+
+# default location is eastus2
+export ASB_LOCATION=eastus2
+export ASB_GEO_LOCATION=centralus
+
+```
+
+#### Run setup
+
+> This takes 45 - 60 minutes to complete
 
 ```bash
 
@@ -87,6 +99,8 @@ Optionally, you can open setup.sh and run the commands interactively to see what
 ```
 
 ### Push Updates
+
+> The setup process creates 5 new files. GitOps will not work unless these files are merged into your branch.
 
 ```bash
 
@@ -109,11 +123,11 @@ git push
 ```bash
 
 ### repeat for each of the other members of your team
-az ad group member add -g $ASB_AADOBJECTID_GROUP_CLUSTERADMIN --member-id $(az ad user show --query objectId -o tsv --id \
-changeThisForEachTeamMember@${ASB_TENANTDOMAIN_K8SRBAC})
+az ad group member add -g $ASB_CLUSTER_ADMIN_GROUP --member-id $(az ad user show --query objectId -o tsv --id \
+changeThisForEachTeamMember@${ASB_TENANT_TLD})
 
 # list users
-az ad group member list -g $ASB_AADOBJECTID_GROUP_CLUSTERADMIN  --query [].mailNickname -o table
+az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o table
 
 ```
 
@@ -122,10 +136,10 @@ az ad group member list -g $ASB_AADOBJECTID_GROUP_CLUSTERADMIN  --query [].mailN
 ```bash
 
 # get AKS credentials
-az aks get-credentials -g $ASB_CORE_RG -n $ASB_AKS_CLUSTER_NAME
+az aks get-credentials -g $ASB_RG_CORE -n $ASB_AKS_NAME
 
 # rename context for simplicity
-kubectl config rename-context $ASB_AKS_CLUSTER_NAME $ASB_TEAM_NAME
+kubectl config rename-context $ASB_RG_CORE $ASB_TEAM_NAME
 
 # check the nodes
 # requires Azure login
@@ -135,6 +149,18 @@ kubectl get nodes
 kubectl get pods -A
 
 ### Congratulations!  Your AKS Secure Baseline cluster is running!
+
+```
+
+### Deploy Configuration and App (optional)
+
+> ASB is designed to use Flux for GitOps
+
+To manually deploy the entire stack for testing
+
+```bash
+
+kubectl apply -f gitops
 
 ```
 
@@ -221,7 +247,7 @@ kubectl get pods -A
 az group list -o table | grep $ASB_TEAM_NAME
 
 ### sometimes the spokes group has to be deleted twice
-az group delete -y --no-wait -g $ASB_SPOKE_RG
+az group delete -y --no-wait -g $ASB_RG_SPOKE
 
 ```
 
@@ -232,7 +258,6 @@ Here are some ideas for `next steps`
 > Please document and PR the steps (even if incomplete) into the /challenges folder
 
 - Integrate `APIM` into the architecture
-- Add `Team Name` to node pool resource group name
 - Install all the pre-reqs locally and create a cluster from your laptop
   - make sure to use a unique `ASB_TEAM_NAME`
 - Use the existing `Key Vault` to load the certs
@@ -258,14 +283,14 @@ Here are some ideas for `next steps`
 ```bash
 
 # stop your cluster
-az aks stop --no-wait -n $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
-az aks show -n $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
+az aks stop --no-wait -n $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
+az aks show -n $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
 
 # start your cluster
-az aks start --no-wait --name $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
-az aks show -n $ASB_AKS_CLUSTER_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
+az aks start --no-wait --name $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME
+az aks show -n $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioningState -o tsv
 
 # disable policies (last resort for debugging)
-az aks disable-addons --addons azure-policy -g rg-bu0001a0008-$ASB_TEAM_NAME -n $ASB_AKS_CLUSTER_NAME
+az aks disable-addons --addons azure-policy -g rg-bu0001a0008-$ASB_TEAM_NAME -n $ASB_AKS_NAME
 
 ```

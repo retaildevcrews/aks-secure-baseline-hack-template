@@ -9,7 +9,6 @@
             }
         },
         "location": {
-            "defaultValue": "eastus2",
             "type": "string",
             "allowedValues": [
                 "australiaeast",
@@ -523,7 +522,7 @@
                                         "fqdnTags": [],
                                         "webCategories": [],
                                         "targetFqdns": [
-                                            "*.hcp.eastus2.azmk8s.io"
+                                            "[concat('*.hcp.', parameters('location'), '.azmk8s.io')]"
                                         ],
                                         "targetUrls": [],
                                         "terminateTLS": false,
@@ -682,7 +681,7 @@
                                         "targetFqdns": [
                                             "*.ods.opinsights.azure.com",
                                             "*.oms.opinsights.azure.com",
-                                            "eastus2.monitoring.azure.com"
+                                            "[concat(parameters('location'), '.monitoring.azure.com')]"
                                         ],
                                         "targetUrls": [],
                                         "terminateTLS": false,
@@ -763,8 +762,7 @@
                                             "*.docker.com",
                                             "*.docker.io",
                                             "docker.io",
-                                            "ghcr.io",
-                                            "github-production-container-registry.s3.amazonaws.com"
+                                            "ghcr.io"
                                         ],
                                         "targetUrls": [],
                                         "terminateTLS": false,
@@ -830,7 +828,7 @@
                                             "[resourceId('Microsoft.Network/ipGroups', variables('aksIpGroupName'))]"
                                         ],
                                         "destinationAddresses": [
-                                            "AzureCloud.eastus2"
+                                            "[concat('AzureCloud.', parameters('location'))]"
                                         ],
                                         "destinationIpGroups": [],
                                         "destinationFqdns": [],
@@ -849,7 +847,7 @@
                                             "[resourceId('Microsoft.Network/ipGroups', variables('aksIpGroupName'))]"
                                         ],
                                         "destinationAddresses": [
-                                            "AzureCloud.eastus2"
+                                            "[concat('AzureCloud.', parameters('location'))]"
                                         ],
                                         "destinationIpGroups": [],
                                         "destinationFqdns": [],
@@ -868,7 +866,7 @@
                                             "[resourceId('Microsoft.Network/ipGroups', variables('aksIpGroupName'))]"
                                         ],
                                         "destinationAddresses": [
-                                            "AzureCloud.eastus2"
+                                            "[concat('AzureCloud.', parameters('location'))]"
                                         ],
                                         "destinationIpGroups": [],
                                         "destinationFqdns": [],

@@ -1997,6 +1997,7 @@
                             "gatekeeper-system",
                             "azure-arc",
                             "flux-cd",
+                            "ingress",
                             "ngsa",
                             "tiny"
                         ]

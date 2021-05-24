@@ -5,8 +5,8 @@ metadata:
   namespace: ingress
 spec:
   type: 0
-  resourceID: $ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_RESOURCE_ID
-  clientID: $ASB_TRAEFIK_USER_ASSIGNED_IDENTITY_CLIENT_ID
+  resourceID: $ASB_TRAEFIK_RESOURCE_ID
+  clientID: $ASB_TRAEFIK_CLIENT_ID
 ---
 apiVersion: aadpodidentity.k8s.io/v1
 kind: AzureIdentityBinding
@@ -27,7 +27,7 @@ spec:
   provider: azure
   parameters:
     usePodIdentity: "true"
-    keyvaultName: $ASB_CERT_KV_NAME 
+    keyvaultName: $ASB_KV_NAME 
     objects:  |
       array:
         - |
@@ -38,7 +38,7 @@ spec:
           objectName: $ASB_CERT_NAME
           objectAlias: tls.key
           objectType: secret
-    tenantId: $ASB_TENANTID_K8SRBAC
+    tenantId: $ASB_TENANT_ID
 ---
 
 kind: RoleBinding
