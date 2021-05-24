@@ -1,17 +1,15 @@
 {
-	"name": "k8s-qs",
-	"image": "ghcr.io/retaildevcrews/kind",
-	"runArgs": ["--init", "--privileged"],
+	"name": "ASB-Hack",
+	"build": { "dockerfile": "Dockerfile" },
+	"runArgs": [ "--init", "--privileged" ],
 	"overrideCommand": false,
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash"
-	},
+	"settings": { },
 
-	"remoteUser": "akdc",
+	"remoteUser": "codespace",
 
-	"forwardPorts": [30000, 30080, 30088, 32000],
+	"forwardPorts": [],
 
 	// Install extensions
 	"extensions": [
@@ -22,5 +20,5 @@
 	],
 
 	// Run Bash script in .devcontainer directory
-	"postCreateCommand": "/bin/bash ./.devcontainer/post-install.sh"
+	"postCreateCommand": "/bin/bash .devcontainer/post-install.sh"
 }
