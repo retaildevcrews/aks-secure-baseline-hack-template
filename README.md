@@ -78,9 +78,11 @@ git push -u origin $ASB_TEAM_NAME
 
 #### Optional: change the location of the cluster
 
+You may check [AKS availability in your region](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=kubernetes-service&regions=all)
+
 ```bash
 
-# default location
+# default location is eastus2
 export ASB_LOCATION=eastus2
 export ASB_GEO_LOCATION=centralus
 
