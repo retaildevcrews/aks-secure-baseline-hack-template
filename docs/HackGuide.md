@@ -8,16 +8,16 @@
 
 ### Process
 
-- Recruit Coaches
+- Recruit Coaches 
   - Questions will come up especially during `Challenges`
+  - Teams will sometimes need focused help and coaches are needed to scale
 - `Challenges` Concept
   - Overview presentation and first setup takes most of a day
-    - What's next?
   - Readme contains a list of ideas
   - Some teams will come up with their own ideas
   - There is a /challenges folder
     - Check in work in-progress
-      - Encourage early PRs
+    - Encourage early PRs
     - Do NOT check in cluster config files!
 - Stand ups
   - We generally do two stand ups / day
@@ -35,10 +35,8 @@
   - We're working on getting it to work ...
 - Domain / cert
   - Register a TLD in the subscription
-  - Add a wildcard cert
-    - Store in Key Vault
-  - Setup DNS
-    - By default, DNS is locked so the A records can't be deleted
+  - Add a wildcard cert stored in Key Vault
+  - Setup DNS - By default, DNS is locked so the A records can't be deleted
   - We use the `TLD` resource group
 - Consider creating an AAD tenant just for the hack
   - After the hack, use your real tenant
@@ -53,7 +51,7 @@
   - Public IPs default to 100 and each cluster needs 4 PIPs
   - Each cluster deploys 5 VMs
   - Make sure you have quota and budget
-    - We suggest 1.5-2 clusters / attendee quota
+    - We suggest 1.5-2 clusters per attendee for quota (e.g., cost, public IPs, cores, etc.)
     - Encourage deleting unused resources
 
 ### Repo Setup
@@ -61,12 +59,13 @@
 - Clone (not fork) this repo
 - Set the `ASB_TENANT_ID` repo secret to your Azure Subscription Tenant ID
 - Set branch protection rule on `main`
-  - Make sure not to merge a PR with the cluster generated files into `main`
+- **Do NOT merge a PR with the cluster generated files into `main`**
 - Make sure your org has GitHub Codespaces access
 - Add users to GitHub org
 - Grant write priveleges to repo
 - Validate Codespaces access before hack
-  - Some people may start early - keep content simple until hack starts
+  - Some people may start early 
+  - Keep content simple until hack starts
 - Setup is currently done via `setup.sh`
   - We do this to make maintenance easier
   - You can copy the commands into readme.md `fences` if you want to do step-by-step
@@ -76,7 +75,7 @@
 ### Communication Setup
 
 - Setup Teams or use GitHub Discussions
-  - Most hacks will have multiple, smaller breakout teams
+  - Most hacks will have multiple breakout teams
   - Add coaches to breakout teams
   - We used `Teams Chats` (not channels) and it worked well
   - Encourage everyone to use the `Join` button and work `in the open`
@@ -100,10 +99,10 @@
     - It needs to be short for ASB_TEAM_NAME
     - red1, blue1, green1 ...
   - One person should drive the entire initial setup
-    - Do not try to switch off in the middle the first time
+  - Do not try to switch off in the middle the first time
 - Stand Up and Challenge Planning
   - Stand up - especially blockers
-  - Encourage attendees to clean up unused clusters
+  - Encourage attendees to clean-up unused clusters
   - Plan Challenge Teams
     - We let attendees self-select
     - 2-5 seems ideal
@@ -115,7 +114,7 @@
   - Make sure everyone is on a challenge team
   - Deal with blockers
 - Hack on Challenges
-  - If blocked, ask for help!
+- **If blocked, ask for help!**
 - Stand up
   - Demos
   - Deal with blockers
@@ -134,9 +133,14 @@
 
 - Tightly couple `teams` to `branches`
   - GitOps is really challenging otherwise
-  - The ASB_TEAM_NAME really is picky ...
+  - The ASB_TEAM_NAME has several constraints based on resource naming rules
   - Do NOT merge team (cluster) branches into main
-    - There are 5 files that are generated and should never be in main
+  - There are 5 files that are generated and should never be in main
+    - flux.yaml
+    - {ASB_TEAM_NAME}.asb.env
+    - ingress-{ASB_TEAM_NAME}.yaml
+    - cluster-${ASB_TEAM_NAME}.json
+    - 02-traefik-config.yaml
 - Open the `readme` in a browser on GitHub
   - This gives you a copy button for the fences
     - Codespaces does not
@@ -151,6 +155,6 @@
   - Sometimes, these change and things break
   - Make sure to understand the preview features in use
 - One person should drive the entire initial setup
-  - Do not try to switch off in the middle the first time
+- Do not try to switch off in the middle the first time
 - Once setup, everything the other team members need is in the team branch
-  - Make sure to add each team member to the cluster admin group
+- Make sure to add each team member to the cluster admin group
