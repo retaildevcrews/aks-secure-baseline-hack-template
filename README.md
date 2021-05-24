@@ -98,6 +98,8 @@ Run setup
 
 ### Push Updates
 
+> The setup process creates 5 new files. GitOps will not work unless these files are merged into your branch.
+
 ```bash
 
 # load the env vars created by setup
@@ -145,6 +147,18 @@ kubectl get nodes
 kubectl get pods -A
 
 ### Congratulations!  Your AKS Secure Baseline cluster is running!
+
+```
+
+### Deploy Configuration and App (optional)
+
+> ASB is designed to use Flux for GitOps
+
+To manually deploy the entire stack for testing
+
+```bash
+
+kubectl apply -f gitops
 
 ```
 
