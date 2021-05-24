@@ -242,7 +242,6 @@ Here are some ideas for `next steps`
 > Please document and PR the steps (even if incomplete) into the /challenges folder
 
 - Integrate `APIM` into the architecture
-- Add `Team Name` to node pool resource group name
 - Install all the pre-reqs locally and create a cluster from your laptop
   - make sure to use a unique `ASB_TEAM_NAME`
 - Use the existing `Key Vault` to load the certs
