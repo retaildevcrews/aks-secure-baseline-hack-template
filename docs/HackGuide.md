@@ -158,3 +158,21 @@
 - Do not try to switch off in the middle the first time
 - Once setup, everything the other team members need is in the team branch
 - Make sure to add each team member to the cluster admin group
+
+### Adding SSL Certs
+
+Create two `repo Codespaces secrets` in your repo and set the values to the results of the commands below
+
+These secrets will be securely loaded into env vars in the Codespace
+
+If attendees are not using Codespaces, they will need to get these values from Key Vault or another method
+
+```bash
+
+# ASB_APP_GW_CERT
+az keyvault secret show --vault-name kv-tld -n aks-sb --query "value" -o tsv | tr -d '\n'
+
+# ASB_INGRESS_CERT
+az keyvault certificate show --vault-name kv-tld -n aks-sb --query "cer" -o tsv | base64 | tr -d '\n'
+
+```
