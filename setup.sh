@@ -163,8 +163,8 @@ rm -f cluster-${ASB_TEAM_NAME}.json
 cat templates/cluster-stamp.json | envsubst '$ASB_TEAM_NAME,$ASB_DNS_ZONE,$ASB_TLD' > cluster-${ASB_TEAM_NAME}.json
 
 # grant executer permission to the key vault
-az keyvault set-policy --certificate-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
-az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
+#az keyvault set-policy --certificate-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
+#az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
 
 # create AKS
 az deployment group create -g $ASB_RG_CORE \
@@ -175,11 +175,15 @@ az deployment group create -g $ASB_RG_CORE \
       targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
       clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
       k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
-      appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n') \
-      aksIngressControllerCertificate=$(az keyvault certificate show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "cer" -o tsv | base64 | tr -d '\n')
+      appGatewayListenerCertificate=$ASB_APP_GW_CERT \
+      aksIngressControllerCertificate=$ASB_INGRESS_CERT
+
+#      appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n') \
+#      aksIngressControllerCertificate=$(az keyvault certificate show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "cer" -o tsv | base64 | tr -d '\n')
+
 
 # Remove user's permissions from shared keyvault. It is no longer needed after this step.
-az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME
+#az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME
 
 # get cluster name
 export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
