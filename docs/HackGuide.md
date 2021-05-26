@@ -170,9 +170,12 @@ If attendees are not using Codespaces, they will need to get these values from K
 ```bash
 
 # APP_GW_CERT
-az keyvault secret show --vault-name kv-tld -n aks-sb --query "value" -o tsv | tr -d '\n'
+az keyvault secret show --subscription bartr-wcnp --vault-name rdc-certs -n aks-sb --query "value" -o tsv | tr -d '\n'
 
 # INGRESS_CERT
-az keyvault certificate show --vault-name kv-tld -n aks-sb --query "cer" -o tsv | base64 | tr -d '\n'
+az keyvault secret show --subscription bartr-wcnp --vault-name rdc-certs -n aks-sb-crt --query "value" -o tsv | base64 | tr -d '\n'
+
+# INGRESS_KEY
+az keyvault secret show --subscription bartr-wcnp --vault-name rdc-certs -n aks-sb-key --query "value" -o tsv | base64 | tr -d '\n'
 
 ```
