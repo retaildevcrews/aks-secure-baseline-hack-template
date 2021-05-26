@@ -169,10 +169,10 @@ If attendees are not using Codespaces, they will need to get these values from K
 
 ```bash
 
-# ASB_APP_GW_CERT
+# APP_GW_CERT
 az keyvault secret show --vault-name kv-tld -n aks-sb --query "value" -o tsv | tr -d '\n'
 
-# ASB_INGRESS_CERT
+# INGRESS_CERT
 az keyvault certificate show --vault-name kv-tld -n aks-sb --query "cer" -o tsv | base64 | tr -d '\n'
 
 ```
