@@ -18,14 +18,14 @@ spec:
   # ingressClassName: "traefik-internal"
   tls:
   - hosts:
-      - ${ASB_TLD}
+      - ${ASB_DOMAIN}
         # it is possible to opt for certificate management strategy with dedicated
         # certificates for each TLS SNI route.
         # In this Rereference Implementation for the sake of simplicity we use a
         # wildcard default certificate added at Ingress Controller configuration level which is *.example.com
         # secretName: <bu0001a0008-00-example-com-tls-secret>
   rules:
-  - host: ${ASB_TLD}
+  - host: ${ASB_DOMAIN}
     http:
       paths:
       - path: /memory

@@ -196,10 +196,10 @@ kubectl get pods -n ingress
 ### if you get a 502 error retry until you get 200
 
 # test http redirect for a 302
-curl -i http://${ASB_TLD}/memory/healthz
+curl -i http://${ASB_DOMAIN}/memory/healthz
 
 # test https
-curl https://${ASB_TLD}/memory/version
+curl https://${ASB_DOMAIN}/memory/version
 
 ### Congratulations! You have GitOps setup on ASB!
 

@@ -34,7 +34,7 @@ if [ -z "$ASB_DNS_ZONE" ]
 then
   export ASB_DNS_ZONE=aks-sb.com
 fi
-export ASB_TLD=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
+export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
 
 # set default shared cert values
 if [ -z "$ASB_KV_NAME" ]
@@ -157,21 +157,19 @@ export ASB_NODEPOOLS_SUBNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n sp
 az deployment group create -g $ASB_RG_HUB -f networking/hub-regionA.json -p location=${ASB_LOCATION} nodepoolSubnetResourceIds="['${ASB_NODEPOOLS_SUBNET_ID}']"
 export ASB_SPOKE_VNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n spoke-BU0001A0008 --query properties.outputs.clusterVnetResourceId.value -o tsv)
 
-# create ARM template
-rm -f cluster-${ASB_TEAM_NAME}.json
-# file contains '$schema'
-cat templates/cluster-stamp.json | envsubst '$ASB_TEAM_NAME,$ASB_DNS_ZONE,$ASB_TLD' > cluster-${ASB_TEAM_NAME}.json
-
 # grant executer permission to the key vault
 az keyvault set-policy --certificate-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
 az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
 
 # create AKS
 az deployment group create -g $ASB_RG_CORE \
-  -f  cluster-${ASB_TEAM_NAME}.json \
+  -f ./cluster-stamp.json \
+  -n cluster-${ASB_TEAM_NAME} \
   -p  location=${ASB_LOCATION} \
       geoRedundancyLocation=${ASB_GEO_LOCATION} \
       asbTeamName=${ASB_TEAM_NAME} \
+      asbDomain=${ASB_DOMAIN} \
+      asbDnsZone=${ASB_DNS_ZONE} \
       targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
       clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
       k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \

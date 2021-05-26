@@ -48,6 +48,22 @@
                 "description": "IP ranges authorized to contact the Kubernetes API server. Passing an empty array will result in no IP restrictions. If any are provided, remember to also provide the public IP of the egress Azure Firewall otherwise your nodes will not be able to talk to the API server (e.g. Flux)."
             }
         },
+        "asbDomain": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128,
+            "metadata": {
+                "description": "Top level domain"
+            }
+        },
+        "asbDnsZone": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128,
+            "metadata": {
+                "description": "DNS Zone"
+            }
+        },
         "location": {
             "type": "string",
             "allowedValues": [
@@ -393,16 +409,16 @@
         {
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2018-09-01",
-            "name": "${ASB_DNS_ZONE}",
+            "name": "[parameters('asbDnsZone')]",
             "location": "global",
             "properties": {},
             "resources": [
                 {
                     "type": "A",
                     "apiVersion": "2018-09-01",
-                    "name": "${ASB_TEAM_NAME}",
+                    "name": "[parameters('asbTeamName')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Network/privateDnsZones', '${ASB_DNS_ZONE}')]"
+                        "[resourceId('Microsoft.Network/privateDnsZones', parameters('asbDnsZone'))]"
                     ],
                     "properties": {
                         "ttl": 3600,
@@ -419,7 +435,7 @@
                     "name": "[concat('to_', variables('vnetName'))]",
                     "location": "global",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Network/privateDnsZones', '${ASB_DNS_ZONE}')]"
+                        "[resourceId('Microsoft.Network/privateDnsZones', parameters('asbDnsZone'))]"
                     ],
                     "properties": {
                         "virtualNetwork": {
@@ -517,7 +533,7 @@
                 ],
                 "probes": [
                     {
-                        "name": "probe-${ASB_TLD}",
+                        "name": "[concat('probe-', parameters('asbDomain'))]",
                         "properties": {
                             "protocol": "Https",
                             "path": "/memory/healthz",
@@ -533,11 +549,11 @@
                 ],
                 "backendAddressPools": [
                     {
-                        "name": "${ASB_TLD}",
+                        "name": "[parameters('asbDomain')]",
                         "properties": {
                             "backendAddresses": [
                                 {
-                                    "fqdn": "${ASB_TLD}"
+                                    "fqdn": "[parameters('asbDomain')]"
                                 }
                             ]
                         }
@@ -553,7 +569,7 @@
                             "pickHostNameFromBackendAddress": true,
                             "requestTimeout": 20,
                             "probe": {
-                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('agwName')), '/probes/probe-${ASB_TLD}')]"
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', variables('agwName')), concat('/probes/probe-', parameters('asbDomain')))]"
                             }
                         }
                     }
@@ -572,7 +588,7 @@
                             "sslCertificate": {
                                 "id": "[concat(variables('apwResourceId'), '/sslCertificates/', variables('agwName'), '-ssl-certificate')]"
                             },
-                            "hostName": "${ASB_TLD}",
+                            "hostName": "[parameters('asbDomain')]",
                             "hostNames": [
                             ],
                             "requireServerNameIndication": true
@@ -601,7 +617,7 @@
                                 "id": "[concat(variables('apwResourceId'), '/httpListeners/listener-https')]"
                             },
                             "backendAddressPool": {
-                                "id": "[concat(variables('apwResourceId'), '/backendAddressPools/${ASB_TLD}')]"
+                                "id": "[concat(variables('apwResourceId'), '/backendAddressPools/', parameters('asbDomain'))]"
                             },
                             "backendHttpSettings": {
                                 "id": "[concat(variables('apwResourceId'), '/backendHttpSettingsCollection/aks-ingress-backendpool-httpsettings')]"
