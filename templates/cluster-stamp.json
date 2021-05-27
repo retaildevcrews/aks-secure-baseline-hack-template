@@ -37,8 +37,16 @@
         },
         "aksIngressControllerCertificate": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
-                "description": "The base 64 encoded AKS Ingress Controller public certificate (as .crt or .cer) to be stored in Azure Key Vault as secret and referenced by Azure Application Gateway as a trusted root certificate."
+                "description": "The AKS Ingress Controller public certificate (as .crt or .cer) to be stored in Azure Key Vault as secret and referenced by the AKS ingress controller."
+            }
+        },
+        "aksIngressControllerKey": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The AKS Ingress Controller private certificate key to be stored in Azure Key Vault as secret and referenced by the AKS ingress controller."
             }
         },
         "clusterAuthorizedIPRanges": {
@@ -239,6 +247,7 @@
                     }
                 },
                 {
+                    "condition": "[not(empty(parameters('aksIngressControllerCertificate')))]",
                     "type": "secrets",
                     "apiVersion": "2019-09-01",
                     "name": "appgw-ingress-internal-aks-ingress-tls",
@@ -247,6 +256,19 @@
                     ],
                     "properties": {
                         "value": "[parameters('aksIngressControllerCertificate')]",
+                        "recoveryLevel": "Purgeable"
+                    }
+                },
+                {
+                    "condition": "[not(empty(parameters('aksIngressControllerKey')))]",
+                    "type": "secrets",
+                    "apiVersion": "2019-09-01",
+                    "name": "appgw-ingress-internal-aks-ingress-key",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+                    ],
+                    "properties": {
+                        "value": "[parameters('aksIngressControllerKey')]",
                         "recoveryLevel": "Purgeable"
                     }
                 },

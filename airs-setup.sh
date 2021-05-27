@@ -141,7 +141,11 @@ az deployment group create -g $ASB_RG_CORE \
       clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
       k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
       appGatewayListenerCertificate=${APP_GW_CERT} \
-      aksIngressControllerCertificate=${INGRESS_CERT}
+      aksIngressControllerCertificate="$(echo $INGRESS_CERT | base64 -d)" \
+      aksIngressControllerKey="$(echo $INGRESS_KEY | base64 -d)"
+
+# get the name of the deployment key vault
+export ASB_KV_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)
 
 # get cluster name
 export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
@@ -158,10 +162,13 @@ export ASB_POD_MI_ID=$(az identity show -n podmi-ingress-controller -g $ASB_RG_C
 ./saveenv.sh -y
 
 # config traefik
+export ASB_INGRESS_CERT_NAME=appgw-ingress-internal-aks-ingress-tls
+export ASB_INGRESS_KEY_NAME=appgw-ingress-internal-aks-ingress-key
+
 rm -f gitops/ingress/02-traefik-config.yaml
-cat templates/traefik-config.yaml | envsubst  > gitops/ingress/02-traefik-config.yaml
+cat templates/traefik-config.yaml | envsubst > gitops/ingress/02-traefik-config.yaml
 rm -f gitops/ngsa/ngsa-ingress.yaml
-cat templates/ngsa-ingress.yaml | envsubst  > gitops/ngsa/ngsa-ingress.yaml
+cat templates/ngsa-ingress.yaml | envsubst > gitops/ngsa/ngsa-ingress.yaml
 
 # update flux.yaml
 rm -f flux.yaml
