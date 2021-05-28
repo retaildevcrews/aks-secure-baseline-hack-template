@@ -1,4 +1,4 @@
-# AKS Secure Baseline Hack
+# AKS Secure Baseline Hack (internal)
 
 ## Welcome to the Patterns and Practices (PnP) AKS Secure Baseline (ASB) hack!
 
