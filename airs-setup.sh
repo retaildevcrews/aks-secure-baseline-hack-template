@@ -99,7 +99,7 @@ fi
 
 # set default domain name
 export ASB_DNS_ZONE=aks-sb.com
-export ASB_TLD=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
+export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
 
 # resource group names
 export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
