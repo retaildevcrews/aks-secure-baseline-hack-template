@@ -1,0 +1,142 @@
+# AKS Secure Baseline Hack
+
+## Welcome to the Patterns and Practices (PnP) AKS Secure Baseline (ASB) hack!
+
+- The Patterns and Practices AKS Secure Baseline repo is located [here](https://github.com/mspnp/aks-secure-baseline)
+  - This repo is a summarization specifically for the hack and `should not be used for production deployments`
+  - Please refer to the PnP repo as the `upstream repo`
+
+> These steps are for setting up AKS secure baseline on internal Microsoft AIRS subscriptions
+> Use the steps in [readme.md](./README.md) if you're not using an AIRS subscription
+
+## Filing Bugs
+
+> Please capture any bugs, issues or ideas on the `GitHub Board`
+
+## Before Deploying ASB
+
+- go to [idweb](https://idweb/) to setup a security group (requires VPN)
+- create a security group
+  - mail-enabled is optional
+  - do not use spaces in the name
+- add yourself and your team to the security group
+- AAD propogation can take up to 30 minutes
+
+## Deploying ASB
+
+### Getting Started
+
+### Login to Azure Portal
+
+- Login using your Microsoft credentials
+
+### Create Codespace
+
+- The `AKS Secure Baseline` repo for the hack is at [github/retaildevcrews/ocw-asb](https://github.com/retaildevcrews/ocw-asb)
+- Open this repo in your web browser
+- Create a new `Codespace` in this repo
+  - If the `fork option` appears, you need to request permission to the repo
+  - Do not choose fork
+
+```bash
+
+
+# login to the Azure subscription for the hack
+az login
+
+# verify the correct subscription - bartr-cloudatx-asb
+az account show
+
+# install kubectl and kubelogin
+sudo az aks install-cli
+
+# set your security group name
+export ASB_CLUSTER_ADMIN_GROUP=yourSecurityGroupName
+
+# verify your security group membership
+az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o table
+
+```
+
+### Set Team Name
+
+> Team Name is very particular and won't fail for about an hour ...
+
+```bash
+
+#### set the team name
+export ASB_TEAM_NAME=[starts with a-z, [a-z,0-9], max length 8]
+
+# make sure the resource group doesn't exist
+az group list -o table | grep $ASB_TEAM_NAME
+
+# make sure the branch doesn't exist
+git branch -a | grep $ASB_TEAM_NAME
+
+# if either exists, choose a different team name and try again
+
+```
+
+### Create git branch
+
+> Do not PR a `cluster branch` into main
+
+```bash
+
+# create a branch for your cluster
+git checkout -b $ASB_TEAM_NAME
+git push -u origin $ASB_TEAM_NAME
+
+```
+
+### Setup AKS Secure Baseline
+
+> This takes 45 - 60 minutes to complete
+
+```bash
+
+./airs-setup.sh $ASB_TEAM_NAME
+
+```
+
+### Push Updates
+
+> The setup process creates 5 new files. GitOps will not work unless these files are merged into your branch.
+
+```bash
+
+# load the env vars created by setup
+# you can reload the env vars at any time by sourcing the file
+source ${ASB_TEAM_NAME}.asb.env
+
+# check deltas - there should be 5 new files
+git status
+
+# push to your branch
+git add .
+git commit -m "added cluster config"
+git push
+
+```
+
+### Validation
+
+> start at the validation section in [readme.md](./README.md#Validation)
+
+### Delete Resources
+
+> Do not just delete the resource groups
+
+```bash
+
+./airs-cleanup.sh $ASB_TEAM_NAME
+
+### delete your git branch if desired
+
+# group deletion can take 10 minutes to complete
+az group list -o table | grep $ASB_TEAM_NAME
+
+### sometimes the spokes group has to be deleted twice
+az group delete -y --no-wait -g $ASB_RG_SPOKE
+
+```
