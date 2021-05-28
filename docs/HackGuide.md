@@ -161,7 +161,7 @@
 
 ### Adding SSL Certs
 
-Create two `repo Codespaces secrets` in your repo and set the values to the results of the commands below
+Create three `repo Codespaces secrets` in your repo and set the values to the results of the commands below
 
 These secrets will be securely loaded into env vars in the Codespace
 
