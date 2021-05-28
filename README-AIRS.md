@@ -24,12 +24,6 @@
 
 ## Deploying ASB
 
-### Getting Started
-
-### Login to Azure Portal
-
-- Login using your Microsoft credentials
-
 ### Create Codespace
 
 - The `AKS Secure Baseline` repo for the hack is at [github/retaildevcrews/ocw-asb](https://github.com/retaildevcrews/ocw-asb)
@@ -40,17 +34,16 @@
 
 ```bash
 
-
-# login to the Azure subscription for the hack
+# login to your Azure subscription
 az login
 
-# verify the correct subscription - bartr-cloudatx-asb
+# verify the correct subscription
 az account show
 
 # install kubectl and kubelogin
 sudo az aks install-cli
 
-# set your security group name
+# set your security group name (created above)
 export ASB_CLUSTER_ADMIN_GROUP=yourSecurityGroupName
 
 # verify your security group membership
@@ -61,6 +54,7 @@ az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o 
 ### Set Team Name
 
 > Team Name is very particular and won't fail for about an hour ...
+> we recommend youralias1 (not first.last)
 
 ```bash
 
@@ -101,29 +95,11 @@ git push -u origin $ASB_TEAM_NAME
 
 ### Push Updates
 
-> The setup process creates 5 new files. GitOps will not work unless these files are merged into your branch.
-
-```bash
-
-# load the env vars created by setup
-# you can reload the env vars at any time by sourcing the file
-source ${ASB_TEAM_NAME}.asb.env
-
-# check deltas - there should be 5 new files
-git status
-
-# push to your branch
-git add .
-git commit -m "added cluster config"
-git push
-
-```
-
-### Validation
-
-> start at the validation section in [readme.md](./README.md#Validation)
+> start at the Push Updates section in `readme.md`
 
 ### Delete Resources
+
+### This is different than `readme.md`
 
 > Do not just delete the resource groups
 
