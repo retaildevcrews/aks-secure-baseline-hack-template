@@ -23,7 +23,7 @@ then
   exit 1
 fi
 
-# change to the this directory
+# change to this directory
 cd $(dirname $0)
 
 # save param as ASB_TEAM_NAME
@@ -163,7 +163,7 @@ az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-
 
 # create AKS
 az deployment group create -g $ASB_RG_CORE \
-  -f ./cluster-stamp.json \
+  -f cluster-stamp.json \
   -n cluster-${ASB_TEAM_NAME} \
   -p  location=${ASB_LOCATION} \
       geoRedundancyLocation=${ASB_GEO_LOCATION} \
