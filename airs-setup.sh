@@ -36,7 +36,7 @@ then
   exit 1
 fi
 
-# change to the this directory
+# change to this directory
 cd $(dirname $0)
 
 # save param as ASB_TEAM_NAME
