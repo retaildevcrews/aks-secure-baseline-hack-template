@@ -120,7 +120,6 @@ then
   export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spokes
 fi
 
-
 # export AAD env vars
 export ASB_TENANT_ID=$(az account show --query tenantId -o tsv)
 

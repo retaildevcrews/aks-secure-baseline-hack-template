@@ -26,8 +26,8 @@ ASB_TEAM_NAME=$1
 
 # resource group names
 export ASB_CORE_RG=rg-${ASB_TEAM_NAME}-core
-export ASB_HUB_RG=rg-${ASB_TEAM_NAME}-hub
-export ASB_SPOKE_RG=rg-${ASB_TEAM_NAME}-spoke
+export ASB_HUB_RG=rg-${ASB_TEAM_NAME}-networking-hub
+export ASB_SPOKE_RG=rg-${ASB_TEAM_NAME}-networking-spoke
 
 export ASB_AKS_NAME=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
 export ASB_KEYVAULT_NAME=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)

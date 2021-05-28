@@ -103,8 +103,8 @@ export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
 
 # resource group names
 export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
-export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-hub
-export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-spoke
+export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hub
+export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spoke
 
 # export AAD env vars
 export ASB_TENANT_ID=$(az account show --query tenantId -o tsv)
