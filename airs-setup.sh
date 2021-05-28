@@ -65,7 +65,8 @@ fi
 # AAD admin group name
 if [ -z "$ASB_CLUSTER_ADMIN_GROUP" ]
 then
-  export ASB_CLUSTER_ADMIN_GROUP=4-co
+  echo ASB_CLUSTER_ADMIN_GROUP must be set to an existing group name
+  exit 1
 fi
 
 # get AAD cluster admin group
