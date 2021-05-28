@@ -130,17 +130,18 @@ export ASB_SPOKE_VNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n spoke-BU
 # create AKS
 az deployment group create -g $ASB_RG_CORE \
   -f cluster-stamp.json \
-  -p  location=${ASB_LOCATION} \
-      geoRedundancyLocation=${ASB_GEO_LOCATION} \
-      asbTeamName=${ASB_TEAM_NAME} \
-      asbDomain=${ASB_DOMAIN} \
-      asbDnsZone=${ASB_DNS_ZONE} \
-      targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
-      clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
-      k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
-      appGatewayListenerCertificate=${APP_GW_CERT} \
-      aksIngressControllerCertificate="$(echo $INGRESS_CERT | base64 -d)" \
-      aksIngressControllerKey="$(echo $INGRESS_KEY | base64 -d)"
+  -n cluster-${ASB_TEAM_NAME} \
+  -p location=${ASB_LOCATION} \
+     geoRedundancyLocation=${ASB_GEO_LOCATION} \
+     asbTeamName=${ASB_TEAM_NAME} \
+     asbDomain=${ASB_DOMAIN} \
+     asbDnsZone=${ASB_DNS_ZONE} \
+     targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
+     clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
+     k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
+     appGatewayListenerCertificate=${APP_GW_CERT} \
+     aksIngressControllerCertificate="$(echo $INGRESS_CERT | base64 -d)" \
+     aksIngressControllerKey="$(echo $INGRESS_KEY | base64 -d)"
 
 # get the name of the deployment key vault
 export ASB_KV_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-stamp --query properties.outputs.keyVaultName.value -o tsv)
