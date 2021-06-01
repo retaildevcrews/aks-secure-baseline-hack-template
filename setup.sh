@@ -198,7 +198,7 @@ az keyvault set-policy --certificate-permissions get --object-id $ASB_POD_MI_ID 
 az keyvault set-policy --secret-permissions get --object-id $ASB_POD_MI_ID -n $ASB_KV_NAME
 
 # config traefik
-export ASB_INGRESS_CERT_NAME=manual-test-for-kv-tld
+export ASB_INGRESS_CERT_NAME=aks-sb-crt
 export ASB_INGRESS_KEY_NAME=$ASB_CERT_NAME
 
 rm -f gitops/ingress/02-traefik-config.yaml
