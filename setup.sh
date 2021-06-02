@@ -172,7 +172,9 @@ az deployment group create -g $ASB_RG_CORE \
       targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
       clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
       k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
-      appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n')
+      appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n') \
+      aksIngressControllerCertificate="not used" \
+      aksIngressControllerKey="not used"
 
 # Remove user's permissions from shared keyvault. It is no longer needed after this step.
 az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME
