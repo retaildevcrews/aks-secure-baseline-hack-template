@@ -1,4 +1,3 @@
 # OCW Challenges
 
-- make a new directory for your challenge
-- add a brief description of your challenge here
+- [Create a dashboard visualizing blocked traffic](./blocked-traffic-dashboard/README.md)
