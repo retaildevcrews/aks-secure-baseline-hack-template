@@ -31,11 +31,11 @@ spec:
     objects:  |
       array:
         - |
-          objectName: manual-test-for-kv-tld
+          objectName: $ASB_INGRESS_CERT_NAME
           objectAlias: tls.crt
           objectType: secret
         - |
-          objectName: $ASB_CERT_NAME
+          objectName: $ASB_INGRESS_KEY_NAME
           objectAlias: tls.key
           objectType: secret
     tenantId: $ASB_TENANT_ID

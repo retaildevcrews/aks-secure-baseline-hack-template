@@ -23,7 +23,7 @@ then
   exit 1
 fi
 
-# change to the this directory
+# change to this directory
 cd $(dirname $0)
 
 # save param as ASB_TEAM_NAME
@@ -120,7 +120,6 @@ then
   export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spokes
 fi
 
-
 # export AAD env vars
 export ASB_TENANT_ID=$(az account show --query tenantId -o tsv)
 
@@ -163,7 +162,7 @@ az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-
 
 # create AKS
 az deployment group create -g $ASB_RG_CORE \
-  -f ./cluster-stamp.json \
+  -f cluster-stamp.json \
   -n cluster-${ASB_TEAM_NAME} \
   -p  location=${ASB_LOCATION} \
       geoRedundancyLocation=${ASB_GEO_LOCATION} \
@@ -174,7 +173,8 @@ az deployment group create -g $ASB_RG_CORE \
       clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
       k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
       appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n') \
-      aksIngressControllerCertificate=$(az keyvault certificate show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "cer" -o tsv | base64 | tr -d '\n')
+      aksIngressControllerCertificate="not used" \
+      aksIngressControllerKey="not used"
 
 # Remove user's permissions from shared keyvault. It is no longer needed after this step.
 az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME
@@ -200,6 +200,9 @@ az keyvault set-policy --certificate-permissions get --object-id $ASB_POD_MI_ID 
 az keyvault set-policy --secret-permissions get --object-id $ASB_POD_MI_ID -n $ASB_KV_NAME
 
 # config traefik
+export ASB_INGRESS_CERT_NAME=aks-sb-crt
+export ASB_INGRESS_KEY_NAME=$ASB_CERT_NAME
+
 rm -f gitops/ingress/02-traefik-config.yaml
 cat templates/traefik-config.yaml | envsubst  > gitops/ingress/02-traefik-config.yaml
 rm -f gitops/ngsa/ngsa-ingress.yaml
