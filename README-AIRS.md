@@ -2,8 +2,8 @@
 
 ## Welcome to the Patterns and Practices (PnP) AKS Secure Baseline (ASB) hack!
 
-- The Patterns and Practices AKS Secure Baseline repo is located [here](https://github.com/mspnp/aks-secure-baseline)
-  - This repo is a summarization specifically for the hack and `should not be used for production deployments`
+- This repo contains modifications and additions to tailor it specifically for hack events and **should not be used for production deployments**
+  - Original PnP AKS Secure Baseline repo is located [here](https://github.com/mspnp/aks-secure-baseline)
   - Please refer to the PnP repo as the `upstream repo`
 
 > These steps are for setting up AKS secure baseline on internal Microsoft AIRS subscriptions
@@ -29,8 +29,8 @@
 - The `AKS Secure Baseline` repo for the hack is at [github/retaildevcrews/ocw-asb](https://github.com/retaildevcrews/ocw-asb)
 - Open this repo in your web browser
 - Create a new `Codespace` in this repo
-  - If the `fork option` appears, you need to request permission to the repo
-  - Do not choose fork
+  - **Do not choose fork**
+  - If the `fork option` appears, you need to request contributor permission to the repo
 
 ```bash
 
@@ -43,8 +43,8 @@ az account show
 # install kubectl and kubelogin
 sudo az aks install-cli
 
-# set your security group name (created above)
-export ASB_CLUSTER_ADMIN_GROUP=yourSecurityGroupName
+# set your security group name (created above); replace [YourSecurityGroupName] before running
+export ASB_CLUSTER_ADMIN_GROUP=[YourSecurityGroupName]
 
 # verify your security group membership
 az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o table
@@ -60,14 +60,18 @@ az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o 
 
 #### set the team name
 export ASB_TEAM_NAME=[starts with a-z, [a-z,0-9], max length 8]
+ 
+if [[ $ASB_TEAM_NAME =~ (^[a-z])([a-z0-9]{1,10})$ ]]; then 
+  # make sure the resource group doesn't exist
+  az group list -o table | grep $ASB_TEAM_NAME
 
-# make sure the resource group doesn't exist
-az group list -o table | grep $ASB_TEAM_NAME
+  # make sure the branch doesn't exist
+  git branch -a | grep $ASB_TEAM_NAME
 
-# make sure the branch doesn't exist
-git branch -a | grep $ASB_TEAM_NAME
-
-# if either exists, choose a different team name and try again
+  # if either exists, choose a different team name and try again
+else 
+    echo "Team name doesn't match required format: [starts with a-z, [a-z,0-9], max length 8]" 
+fi
 
 ```
 
