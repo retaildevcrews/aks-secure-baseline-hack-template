@@ -143,11 +143,10 @@
   - GitOps is really challenging otherwise
   - The ASB_TEAM_NAME has several constraints based on resource naming rules
   - Do NOT merge team (cluster) branches into main
-  - There are 5 files that are generated and should never be in main
+  - There are 4 files that are generated and should never be in main
     - flux.yaml
     - {ASB_TEAM_NAME}.asb.env
-    - ingress-{ASB_TEAM_NAME}.yaml
-    - cluster-${ASB_TEAM_NAME}.json
+    - ngsa-ingress.yaml
     - 02-traefik-config.yaml
 - Open the `readme` in a browser on GitHub
   - This gives you a copy button for the fences
