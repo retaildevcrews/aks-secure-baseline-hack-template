@@ -25,13 +25,13 @@ fi
 ASB_TEAM_NAME=$1
 
 # resource group names
-export ASB_CORE_RG=rg-${ASB_TEAM_NAME}-core
-export ASB_HUB_RG=rg-${ASB_TEAM_NAME}-networking-hub
-export ASB_SPOKE_RG=rg-${ASB_TEAM_NAME}-networking-spoke
+export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
+export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hub
+export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spoke
 
-export ASB_AKS_NAME=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
-export ASB_KEYVAULT_NAME=$(az deployment group show -g $ASB_CORE_RG -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)
-export ASB_LA_HUB=$(az monitor log-analytics workspace list -g $ASB_HUB_RG --query [0].name -o tsv)
+export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
+export ASB_KEYVAULT_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)
+export ASB_LA_HUB=$(az monitor log-analytics workspace list -g $ASB_RG_HUB --query [0].name -o tsv)
 
 if [ -v "$ASB_KEYVAULT_NAME" ]
 then
@@ -41,13 +41,13 @@ then
 fi
 
 # hard delete Log Analytics
-$(az monitor log-analytics workspace delete -y --force true -g $ASB_CORE_RG -n la-${ASB_AKS_NAME})
-$(az monitor log-analytics workspace delete -y --force true -g $ASB_HUB_RG -n $ASB_LA_HUB)
+$(az monitor log-analytics workspace delete -y --force true -g $ASB_RG_CORE -n la-${ASB_AKS_NAME})
+$(az monitor log-analytics workspace delete -y --force true -g $ASB_RG_HUB -n $ASB_LA_HUB)
 
 # delete the resource groups
-az group delete -y --no-wait -g $ASB_CORE_RG
-az group delete -y --no-wait -g $ASB_HUB_RG
-az group delete -y --no-wait -g $ASB_SPOKE_RG
+az group delete -y --no-wait -g $ASB_RG_CORE
+az group delete -y --no-wait -g $ASB_RG_HUB
+az group delete -y --no-wait -g $ASB_RG_SPOKE
 
 # delete from .kube/config
 kubectl config delete-context $ASB_TEAM_NAME
