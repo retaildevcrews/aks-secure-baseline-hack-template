@@ -8,7 +8,7 @@
 
 ### Process
 
-- Recruit Coaches 
+- Recruit Coaches
   - Questions will come up especially during `Challenges`
   - Teams will sometimes need focused help and coaches are needed to scale
 - `Challenges` Concept
@@ -31,8 +31,8 @@
 ### Azure Subscription
 
 - You need an Azure Subscription with AAD permissions
-- This will not currently work in an AIRS subscription
-  - We're working on getting it to work ...
+- This will work in an AIRS subscription
+  - See `readme-airs` as the instructions are slightly different
 - Domain / cert
   - Register a TLD in the subscription
   - Add a wildcard cert stored in Key Vault
@@ -64,7 +64,7 @@
 - Add users to GitHub org
 - Grant write priveleges to repo
 - Validate Codespaces access before hack
-  - Some people may start early 
+  - Some people may start early
   - Keep content simple until hack starts
 - Setup is currently done via `setup.sh`
   - We do this to make maintenance easier
