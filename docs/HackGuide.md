@@ -5,6 +5,7 @@
 ### Attendee Prerequisites
 
 - Working knowledge of Docker, k8s and AKS
+- GitHub ID with 2FA enabled
 
 ### Process
 
