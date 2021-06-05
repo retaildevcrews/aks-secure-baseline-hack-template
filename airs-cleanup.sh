@@ -41,8 +41,8 @@ then
 fi
 
 # hard delete Log Analytics
-$(az monitor log-analytics workspace delete -y --force true -g $ASB_RG_CORE -n la-${ASB_AKS_NAME})
-$(az monitor log-analytics workspace delete -y --force true -g $ASB_RG_HUB -n $ASB_LA_HUB)
+az monitor log-analytics workspace delete -y --force true -g $ASB_RG_CORE -n la-${ASB_AKS_NAME}
+az monitor log-analytics workspace delete -y --force true -g $ASB_RG_HUB -n $ASB_LA_HUB
 
 # delete the resource groups
 az group delete -y --no-wait -g $ASB_RG_CORE
