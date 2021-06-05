@@ -194,6 +194,8 @@ curl https://${ASB_DOMAIN}/memory/version
 ### Resetting the cluster
 
 > Reset the cluster to a known state
+>
+> This is normally signifcantly faster for inner-loop development than recreating the cluster
 
 ```bash
 
@@ -204,6 +206,8 @@ kubectl delete ns flux-cd
 kubectl delete ns ngsa
 kubectl delete ns ingress
 kubectl delete ns cluster-baseline-settings
+
+# delete any additional namespaces you created
 
 # check the pods
 kubectl get pods -A
