@@ -117,7 +117,12 @@
   - Make sure everyone is on a challenge team
   - Deal with blockers
 - Hack on Challenges
-- **If blocked, ask for help!**
+  - **If blocked, ask for help!**
+- Social / Team Building Event
+  - Adding a social or team building event to one or more of the days helps the team get to know each other better
+    - Simple games like pictionary
+    - Online break-out rooms
+    - Virtual shopping to find cool / weird items
 - Stand up
   - Demos
   - Deal with blockers
