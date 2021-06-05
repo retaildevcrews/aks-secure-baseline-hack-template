@@ -19,6 +19,9 @@
     - Check in work in-progress
     - Encourage early PRs
     - Do NOT check in cluster config files!
+- See something, say something
+  - Encourage hack teams to report issues / bug
+  - Encourage hack teams to ask questions early rather than remain blocked
 - Stand ups
   - We generally do two stand ups / day
     - Keep them short and focused
