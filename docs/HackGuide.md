@@ -12,7 +12,7 @@
   - Questions will come up especially during `Challenges`
   - Teams will sometimes need focused help and coaches are needed to scale
 - `Challenges` Concept
-  - Overview presentation and first setup takes most of a day
+  - Overview presentation and first setup takes most of day 1
   - Readme contains a list of ideas
   - Some teams will come up with their own ideas
   - There is a /challenges folder
