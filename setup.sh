@@ -23,6 +23,25 @@ then
   exit 1
 fi
 
+# check certs
+if [ -z "$APP_GW_CERT" ]
+then
+  echo App Gateway SSL certificate is missing
+  exit 1
+fi
+
+if [ -z "$INGRESS_CERT" ]
+then
+  echo Ingress SSL certificate is missing
+  exit 1
+fi
+
+if [ -z "$INGRESS_KEY" ]
+then
+  echo Ingress SSL private key is missing
+  exit 1
+fi
+
 # change to this directory
 cd $(dirname $0)
 
