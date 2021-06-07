@@ -248,6 +248,7 @@ Here are some ideas for `next steps`
   - make sure to use a unique `ASB_TEAM_NAME`
 - Use the existing `Key Vault` to load the certs
   - Copy and modify the template to not create a new Key Vault
+- Create a dashboard visualizing blocked traffic
 - Explore `Azure Log Analytics` for observability
 - Deploy `Prometheus` and `Grafana` for CNCF observability
 - Deploy `Fluent Bit` to `Log Analytics` for `Application Logging`
