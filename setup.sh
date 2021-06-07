@@ -36,17 +36,6 @@ then
 fi
 export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
 
-# set default shared cert values
-if [ -z "$ASB_KV_NAME" ]
-then
-  export ASB_KV_NAME=kv-tld
-fi
-
-if [ -z "$ASB_CERT_NAME" ]
-then
-  export ASB_CERT_NAME=aks-sb
-fi
-
 # set default location
 if [ -z "$ASB_LOCATION" ]
 then
@@ -156,10 +145,6 @@ export ASB_NODEPOOLS_SUBNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n sp
 az deployment group create -g $ASB_RG_HUB -f networking/hub-regionA.json -p location=${ASB_LOCATION} nodepoolSubnetResourceIds="['${ASB_NODEPOOLS_SUBNET_ID}']"
 export ASB_SPOKE_VNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n spoke-BU0001A0008 --query properties.outputs.clusterVnetResourceId.value -o tsv)
 
-# grant executer permission to the key vault
-az keyvault set-policy --certificate-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
-az keyvault set-policy --secret-permissions list get --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g TLD
-
 # create AKS
 az deployment group create -g $ASB_RG_CORE \
   -f cluster-stamp.json \
@@ -172,12 +157,9 @@ az deployment group create -g $ASB_RG_CORE \
       targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
       clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
       k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
-      appGatewayListenerCertificate=$(az keyvault secret show --vault-name $ASB_KV_NAME -n $ASB_CERT_NAME --query "value" -o tsv | tr -d '\n') \
-      aksIngressControllerCertificate="not used" \
-      aksIngressControllerKey="not used"
-
-# Remove user's permissions from shared keyvault. It is no longer needed after this step.
-az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME
+      appGatewayListenerCertificate=${APP_GW_CERT} \
+      aksIngressControllerCertificate="$(echo $INGRESS_CERT | base64 -d)" \
+      aksIngressControllerKey="$(echo $INGRESS_KEY | base64 -d)"
 
 # get cluster name
 export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
@@ -191,17 +173,13 @@ az network dns record-set a add-record -a $ASB_AKS_PIP -n $ASB_TEAM_NAME -g TLD 
 # Get the AKS Ingress Controller Managed Identity details.
 export ASB_TRAEFIK_RESOURCE_ID=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityResourceId.value -o tsv)
 export ASB_TRAEFIK_CLIENT_ID=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityClientId.value -o tsv)
-export ASB_POD_MI_ID=$(az identity show -n podmi-ingress-controller -g $ASB_RG_CORE --query principalId -o tsv)
 
 # save env vars
 ./saveenv.sh -y
 
-az keyvault set-policy --certificate-permissions get --object-id $ASB_POD_MI_ID -n $ASB_KV_NAME
-az keyvault set-policy --secret-permissions get --object-id $ASB_POD_MI_ID -n $ASB_KV_NAME
-
 # config traefik
-export ASB_INGRESS_CERT_NAME=aks-sb-crt
-export ASB_INGRESS_KEY_NAME=$ASB_CERT_NAME
+export ASB_INGRESS_CERT_NAME=appgw-ingress-internal-aks-ingress-tls
+export ASB_INGRESS_KEY_NAME=appgw-ingress-internal-aks-ingress-key
 
 rm -f gitops/ingress/02-traefik-config.yaml
 cat templates/traefik-config.yaml | envsubst  > gitops/ingress/02-traefik-config.yaml
