@@ -161,6 +161,9 @@ az deployment group create -g $ASB_RG_CORE \
       aksIngressControllerCertificate="$(echo $INGRESS_CERT | base64 -d)" \
       aksIngressControllerKey="$(echo $INGRESS_KEY | base64 -d)"
 
+# get the name of the deployment key vault
+export ASB_KV_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)
+
 # get cluster name
 export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
 
