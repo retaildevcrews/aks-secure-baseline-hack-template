@@ -5,20 +5,24 @@
 ### Attendee Prerequisites
 
 - Working knowledge of Docker, k8s and AKS
+- GitHub ID with 2FA enabled
 
 ### Process
 
-- Recruit Coaches 
+- Recruit Coaches
   - Questions will come up especially during `Challenges`
   - Teams will sometimes need focused help and coaches are needed to scale
 - `Challenges` Concept
-  - Overview presentation and first setup takes most of a day
+  - Overview presentation and first setup takes most of day 1
   - Readme contains a list of ideas
   - Some teams will come up with their own ideas
   - There is a /challenges folder
     - Check in work in-progress
     - Encourage early PRs
     - Do NOT check in cluster config files!
+- See something, say something
+  - Encourage hack teams to report issues / bug
+  - Encourage hack teams to ask questions early rather than remain blocked
 - Stand ups
   - We generally do two stand ups / day
     - Keep them short and focused
@@ -31,8 +35,8 @@
 ### Azure Subscription
 
 - You need an Azure Subscription with AAD permissions
-- This will not currently work in an AIRS subscription
-  - We're working on getting it to work ...
+- This will work in an AIRS subscription
+  - See `readme-airs` as the instructions are slightly different
 - Domain / cert
   - Register a TLD in the subscription
   - Add a wildcard cert stored in Key Vault
@@ -64,7 +68,7 @@
 - Add users to GitHub org
 - Grant write priveleges to repo
 - Validate Codespaces access before hack
-  - Some people may start early 
+  - Some people may start early
   - Keep content simple until hack starts
 - Setup is currently done via `setup.sh`
   - We do this to make maintenance easier
@@ -114,7 +118,12 @@
   - Make sure everyone is on a challenge team
   - Deal with blockers
 - Hack on Challenges
-- **If blocked, ask for help!**
+  - **If blocked, ask for help!**
+- Social / Team Building Event
+  - Adding a social or team building event to one or more of the days helps the team get to know each other better
+    - Simple games like pictionary
+    - Online break-out rooms
+    - Virtual shopping to find cool / weird items
 - Stand up
   - Demos
   - Deal with blockers
@@ -135,11 +144,10 @@
   - GitOps is really challenging otherwise
   - The ASB_TEAM_NAME has several constraints based on resource naming rules
   - Do NOT merge team (cluster) branches into main
-  - There are 5 files that are generated and should never be in main
+  - There are 4 files that are generated and should never be in main
     - flux.yaml
     - {ASB_TEAM_NAME}.asb.env
-    - ingress-{ASB_TEAM_NAME}.yaml
-    - cluster-${ASB_TEAM_NAME}.json
+    - ngsa-ingress.yaml
     - 02-traefik-config.yaml
 - Open the `readme` in a browser on GitHub
   - This gives you a copy button for the fences
@@ -161,7 +169,9 @@
 
 ### Adding SSL Certs
 
-Create three `repo Codespaces secrets` in your repo and set the values to the results of the commands below
+> You will need to request access to the `Key Vault`
+
+Create three `repo level Codespaces secrets` in your repo and set the values to the results of the commands below
 
 These secrets will be securely loaded into env vars in the Codespace
 
