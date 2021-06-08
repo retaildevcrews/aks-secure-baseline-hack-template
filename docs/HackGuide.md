@@ -166,9 +166,6 @@
 - Do not try to switch off in the middle the first time
 - Once setup, everything the other team members need is in the team branch
 - Make sure to add each team member to the cluster admin group
-- Overview videos of aks-secure-baseline and deployed components
-  - [Part 1](https://msit.microsoftstream.com/video/e59c0840-98dc-a7ab-5f7b-f1ebb810bf2b?channelId=533aa1ff-0400-85a8-6076-f1eb81fb8468)
-  - [Part 2](https://msit.microsoftstream.com/video/e59c0840-98dc-a7ab-1e9d-f1ebb810d1a2?channelId=533aa1ff-0400-85a8-6076-f1eb81fb8468)
 
 ### Adding SSL Certs
 
@@ -192,3 +189,9 @@ az keyvault secret show --subscription bartr-wcnp --vault-name rdc-certs -n aks-
 az keyvault secret show --subscription bartr-wcnp --vault-name rdc-certs -n aks-sb-key --query "value" -o tsv | base64 | tr -d '\n'
 
 ```
+
+### Videos
+
+- Overview videos of aks-secure-baseline and deployed components
+  - [Part 1](https://msit.microsoftstream.com/video/e59c0840-98dc-a7ab-5f7b-f1ebb810bf2b?channelId=533aa1ff-0400-85a8-6076-f1eb81fb8468)
+  - [Part 2](https://msit.microsoftstream.com/video/e59c0840-98dc-a7ab-1e9d-f1ebb810d1a2?channelId=533aa1ff-0400-85a8-6076-f1eb81fb8468)
