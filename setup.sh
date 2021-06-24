@@ -9,10 +9,10 @@ then
   exit 1
 fi
 
-if [[ ${#1} -gt 8 ]] || [[ ! "$1" =~ ^[a-z][a-z0-9]*$ ]] 
+if [[ ${#1} -lt 3 || ${#1} -gt 8 ]] || [[ ! "$1" =~ ^[a-z][a-z0-9]*$ ]] 
 then
   echo "${1} is an invalid value for ASB_TEAM_NAME."
-  echo "Please ensure that ASB_TEAM_NAME is 8 characters or less in length, starts with a lower case letter, and only contains integers and/or lower case letters."
+  echo "Please ensure that ASB_TEAM_NAME is 3 to 8 characters in length, starts with a lower case letter, and only contains integers and/or lower case letters."
   exit 1
 fi
 
