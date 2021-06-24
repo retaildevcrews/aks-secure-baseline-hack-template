@@ -9,6 +9,13 @@ then
   exit 1
 fi
 
+if [[ ${#1} -gt 8 ]] || [[ ! "$1" =~ ^[a-z][a-z0-9]*$ ]] 
+then
+  echo "${1} is an invalid value for ASB_TEAM_NAME."
+  echo "Please ensure that ASB_TEAM_NAME is 8 characters or less in length, starts with a lower case letter, and only contains integers and/or lower case letters."
+  exit 1
+fi
+
 # help
 if [ "-h" == "$1" ] || [ "--help" == "$1" ]
 then
