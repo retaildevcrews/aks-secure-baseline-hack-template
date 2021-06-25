@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ngsa-cosmos
+  namespace: ngsa
+  labels:
+    app.kubernetes.io/name: ngsa-cosmos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ngsa-cosmos
+  template:
+    metadata:
+      labels:
+        app: ngsa-cosmos
+        aadpodidbinding: $ASB_NGSA_MI_NAME
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+    spec:
+      containers:
+        - name: app
+          image: retaildevcrew/ngsa-app:beta
+          imagePullPolicy: Always
+
+          args:
+          - --prometheus
+          - --url-prefix
+          - /cosmos
+          - --zone
+          - az-eastus2
+          - --region
+          - East
+
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+
+          volumeMounts:
+            - name: secrets
+              mountPath: "/app/secrets"
+      volumes:
+        - name: secrets
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: ngsa-secrets
+
+      nodeSelector:
+        agentpool: npuser01
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngsa-cosmos
+  namespace: ngsa
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: ngsa-cosmos
+
+---
+
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentity
+metadata:
+  name: $ASB_NGSA_MI_NAME
+  namespace: ngsa
+spec:
+  type: 0
+  resourceID: $ASB_NGSA_MI_RESOURCE_ID
+  clientID: $ASB_NGSA_MI_CLIENT_ID
+
+---
+
+apiVersion: aadpodidentity.k8s.io/v1
+kind: AzureIdentityBinding
+metadata:
+  name: ${ASB_NGSA_MI_NAME}-binding
+  namespace: ngsa
+spec:
+  azureIdentity: $ASB_NGSA_MI_NAME
+  selector: $ASB_NGSA_MI_NAME
+
+---
+
+apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+kind: SecretProviderClass
+metadata:
+  name: ngsa-secrets
+  namespace: ngsa
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "true"
+    keyvaultName: "$ASB_KV_NAME"
+    objects: |
+      array:
+        - |
+          objectName: CosmosDatabase
+          objectType: secret
+        - |
+          objectName: CosmosCollection
+          objectType: secret
+        - |
+          objectName: CosmosKey
+          objectType: secret
+        - |
+          objectName: CosmosUrl
+          objectType: secret
+    tenantId: "$ASB_TENANT_ID"

@@ -35,3 +35,10 @@ spec:
             name: ngsa-memory
             port:
               number: 8080
+      - path: /cosmos
+        pathType: Prefix
+        backend:
+          service:
+            name: ngsa-cosmos
+            port:
+              number: 8080
