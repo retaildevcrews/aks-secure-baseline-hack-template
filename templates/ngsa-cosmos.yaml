@@ -79,51 +79,30 @@ spec:
 
 ---
 
-apiVersion: aadpodidentity.k8s.io/v1
-kind: AzureIdentity
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: $ASB_NGSA_MI_NAME
+  name: ngsa-cosmos-ingress
   namespace: ngsa
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.class: traefik-internal
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.options: default
+    traefik.ingress.kubernetes.io/router.middlewares: ngsa-stripprefix@file
 spec:
-  type: 0
-  resourceID: $ASB_NGSA_MI_RESOURCE_ID
-  clientID: $ASB_NGSA_MI_CLIENT_ID
-
----
-
-apiVersion: aadpodidentity.k8s.io/v1
-kind: AzureIdentityBinding
-metadata:
-  name: ${ASB_NGSA_MI_NAME}-binding
-  namespace: ngsa
-spec:
-  azureIdentity: $ASB_NGSA_MI_NAME
-  selector: $ASB_NGSA_MI_NAME
-
----
-
-apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
-kind: SecretProviderClass
-metadata:
-  name: ngsa-secrets
-  namespace: ngsa
-spec:
-  provider: azure
-  parameters:
-    usePodIdentity: "true"
-    keyvaultName: "$ASB_KV_NAME"
-    objects: |
-      array:
-        - |
-          objectName: CosmosDatabase
-          objectType: secret
-        - |
-          objectName: CosmosCollection
-          objectType: secret
-        - |
-          objectName: CosmosKey
-          objectType: secret
-        - |
-          objectName: CosmosUrl
-          objectType: secret
-    tenantId: "$ASB_TENANT_ID"
+  tls:
+  - hosts:
+      - ${ASB_DOMAIN}
+  rules:
+  - host: ${ASB_DOMAIN}
+    http:
+      paths:
+      - path: /cosmos
+        pathType: Prefix
+        backend:
+          service:
+            name: ngsa-cosmos
+            port:
+              number: 8080

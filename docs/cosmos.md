@@ -128,6 +128,7 @@ az keyvault set-policy -n $ASB_KV_NAME --object-id $ASB_NGSA_MI_PRINCIPAL_ID --s
 export ASB_NGSA_MI_CLIENT_ID=$(az identity show -n $ASB_NGSA_MI_NAME -g $ASB_RG_CORE --query "clientId" -o tsv)
 
 cat templates/ngsa-cosmos.yaml | envsubst > gitops/ngsa/ngsa-cosmos.yaml
+cat templates/ngsa-pod-identity.yaml | envsubst > gitops/ngsa/ngsa-pod-identity.yaml
 
 # save env vars
 ./saveenv.sh -y
@@ -152,8 +153,10 @@ git push
 
 ```bash
 
-# TODO:
-# - add comment on timing of how long pods take to go to running state if it is more than 1 minute
-# - add commands to check pods and logs
+# wait for ngsa-cosmos pods to start
+### this can take 8-10 minutes as the cluster sets up pod identity, and secrets via the csi driver
+kubectl get pods -n ingress
+
+curl https://${ASB_DOMAIN}/cosmos/version
 
 ```
