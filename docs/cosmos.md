@@ -88,6 +88,9 @@ az keyvault secret set -o table --vault-name $ASB_KV_NAME --name "CosmosKey" \
   --value $(az cosmosdb keys list -n $ASB_IMDB_NAME -g $ASB_RG_CORE --query primaryMasterKey -o tsv)
 az keyvault secret set -o table --vault-name $ASB_KV_NAME --name "CosmosUrl" --value "https://${ASB_IMDB_NAME}.documents.azure.com:443/"
 
+# remove logged in user's access to key vault
+az keyvault delete-policy --object-id $(az ad signed-in-user show --query objectId -o tsv) -n $ASB_KV_NAME -g $ASB_RG_CORE
+
 ```
 
 ## Create managed identity for app
@@ -149,13 +152,22 @@ git push
 
 ```
 
+Flux will pick up the latest changes. Use the command below to force flux to sync.
+
+```bash
+
+# force flux to sync changes
+fluxctl sync
+
+```
+
 ## Validate
 
 ```bash
 
 # wait for ngsa-cosmos pods to start
 ### this can take 8-10 minutes as the cluster sets up pod identity, and secrets via the csi driver
-kubectl get pods -n ingress
+kubectl get pods -n ngsa
 
 curl https://${ASB_DOMAIN}/cosmos/version
 
