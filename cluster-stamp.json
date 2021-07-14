@@ -1212,7 +1212,7 @@
                     "authorizedIPRanges": "[parameters('clusterAuthorizedIPRanges')]",
                     "enablePrivateCluster": false
                 },
-                "podIdentityProfile": { 
+                "podIdentityProfile": {
                     "enabled": false, /* This feature is currently in preview and will eventually replace the aad-pod-identity configuration set up by hand in this reference implementation */
                     "userAssignedIdentities": [],
                     "userAssignedIdentityExceptions": []
@@ -2069,6 +2069,10 @@
         "containerRegistryName": {
             "type": "string",
             "value": "[variables('defaultAcrName')]"
+        },
+        "vnetNodePoolSubnetResourceId": {
+            "type": "string",
+            "value": "[variables('vnetNodePoolSubnetResourceId')]"
         }
     }
 }
