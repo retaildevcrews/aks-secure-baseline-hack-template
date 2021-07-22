@@ -12,6 +12,12 @@
 - Pre-work
   - Send link to [AKS Secure Baseline](https://github.com/mspnp/aks-secure-baseline) as a pre-read
   - Pay particular attention to `networking` and `Azure Policy`
+- Pre-session
+  - For customers, setup an "office hour" 3-4 days before hack
+- Send Calendar Invite
+  - Send reminders one week before event and again 2 days before event
+  - Pre-assign coaches to teams if possible
+  - Setup breakout meetings in advance
 - Recruit Coaches
   - Questions will come up especially during `Challenges`
   - Teams will sometimes need focused help and coaches are needed to scale
