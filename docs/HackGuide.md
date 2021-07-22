@@ -9,6 +9,9 @@
 
 ### Process
 
+- Pre-work
+  - Send link to [AKS Secure Baseline](https://github.com/mspnp/aks-secure-baseline) as a pre-read
+  - Pay particular attention to `networking` and `Azure Policy`
 - Recruit Coaches
   - Questions will come up especially during `Challenges`
   - Teams will sometimes need focused help and coaches are needed to scale
