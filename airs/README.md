@@ -6,6 +6,21 @@
   - This repo is a summarization specifically for the OpenHack and `should not be used for production deployments`
   - Please refer to the PnP repo as the `upstream repo`
 
+> These steps are for setting up AKS secure baseline on internal Microsoft AIRS subscriptions
+> Use the steps in [readme.md](./README.md) if you're not using an AIRS subscription
+
+## Before Deploying ASB
+
+- go to [idweb](https://idweb/) to setup a security group (requires VPN)
+- create a security group
+  - mail-enabled is optional
+  - do not use spaces in the name
+- add yourself and your team to the security group
+- AAD propogation can take up to 30 minutes
+
+
+> TODO - the rest of this should be the same - see if we can consolidate
+
 ## Filing Bugs
 
 > Please capture any bugs, issues or ideas on the `GitHub Board`
@@ -16,8 +31,8 @@
 
 ### Create Codespace
 
-> The OpenHack requires Codespaces and bash
-> If you have dotfiles that default to zsh, make sure to use bash as your terminal
+> The OpenHack requires Codespaces and zsh
+> If you have dotfiles that default to bash, make sure to use zsh as your terminal
 
 - The `AKS Secure Baseline` repo for the OpenHack is at [github//asb-spark/openhack](https://github.com/asb-spark/openhack)
 - Open this repo in your web browser
