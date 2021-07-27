@@ -117,7 +117,7 @@
                             "destinationPortRange": "443",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
-                            "priority": 101,
+                            "priority": 100,
                             "direction": "Inbound"
                         }
                     },
