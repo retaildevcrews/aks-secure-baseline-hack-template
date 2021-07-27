@@ -56,5 +56,5 @@ echo ""
 echo "check group delete:  az group list -o table | grep $ASB_TEAM_NAME"
 
 echo ""
-echo "Delete DNS A Record"
+echo "Delete DNS A Record (if you have permission)"
 echo "az network dns record-set a delete -g tld -z aks-sb.com -y -n $ASB_TEAM_NAME"
