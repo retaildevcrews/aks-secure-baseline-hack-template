@@ -6,6 +6,7 @@
 
 - Working knowledge of Docker, k8s and AKS
 - GitHub ID with 2FA enabled
+- Azure subscription with owner privileges
 
 ### Process
 
@@ -44,8 +45,6 @@
 ### Azure Subscription
 
 - You need an Azure Subscription with AAD permissions
-- This will work in an AIRS subscription
-  - See `readme-airs` as the instructions are slightly different
 - Domain / cert
   - Register a TLD in the subscription
   - Add a wildcard cert stored in Key Vault
@@ -67,13 +66,24 @@
     - We suggest 1.5-2 clusters per attendee for quota (e.g., cost, public IPs, cores, etc.)
     - Encourage deleting unused resources
 
+### AIRS Subscription
+
+- Each attendee should have an Azure AIRS Subscription
+- Create Azure Security Group via [idweb](https://idweb/)
+- Add hack attendees to security group
+- Check Azure Quotas and increase if needed
+  - Public IPs default to 100 and each cluster needs 4 PIPs
+  - Each cluster deploys 5 VMs
+  - Make sure you have quota and budget
+    - We suggest 1.5-2 clusters per attendee for quota (e.g., cost, public IPs, cores, etc.)
+    - Encourage deleting unused resources
+
 ### Repo Setup
 
-- Clone (not fork) this repo
+- Clone (not fork) this repo into a GitHub tenant with Codespaces enabled
 - Set the `ASB_TENANT_ID` repo secret to your Azure Subscription Tenant ID
 - Set branch protection rule on `main`
 - **Do NOT merge a PR with the cluster generated files into `main`**
-- Make sure your org has GitHub Codespaces access
 - Add users to GitHub org
 - Grant write priveleges to repo
 - Validate Codespaces access before hack
@@ -90,13 +100,13 @@
 - Setup Teams or use GitHub Discussions
   - Most hacks will have multiple breakout teams
   - Add coaches to breakout teams
-  - We used `Teams Chats` (not channels) and it worked well
+  - We used `Teams Meetings` (not channels or chats) and it worked well
   - Encourage everyone to use the `Join` button and work `in the open`
   - Allows coaches to `drop in`
 
 ## Execution
 
-> Duration: 3-4 days is a good estimate to go deeper via `Challenges`
+> Duration: 2-4 days is a good estimate to go deeper via `Challenges`
 
 ### Day 1 Agenda
 
@@ -113,6 +123,13 @@
     - red1, blue1, green1 ...
   - One person should drive the entire initial setup
   - Do not try to switch off in the middle the first time
+- Each team works through the first challenge
+  - Add https auto-redirect to App Gateway
+  - Two part challenge
+    - Add to existing cluster
+    - Update ARM Template
+    - Delete existing cluster
+    - Deploy new cluster
 - Stand Up and Challenge Planning
   - Stand up - especially blockers
   - Encourage attendees to clean-up unused clusters

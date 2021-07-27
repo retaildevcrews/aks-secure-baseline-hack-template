@@ -17,8 +17,8 @@ args:
 
 ### Prerequisite
 
-- This challenge depends on the [Deploying from Azure Container Registry (ACR)](../azure-container-registry/README.md) challenge. 
-- Load the image `ghcr.io/retaildevcrews/webvalidate:beta` into ACR using the same steps you used to load the NGSA image into ACR.
+- This challenge depends on [Challenge 3: Deploying from Azure Container Registry](../azure-container-registry/README.md)
+- Load the image `ghcr.io/retaildevcrews/webvalidate:beta` into ACR using same steps you used on challenge 3.
 
 ### Validate
 
