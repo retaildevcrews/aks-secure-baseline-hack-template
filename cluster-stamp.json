@@ -1161,7 +1161,7 @@
                         "enabled": false
                     },
                     "azurepolicy": {
-                        "enabled": false,
+                        "enabled": true,
                         "config": {
                             "version": "v2"
                         }
