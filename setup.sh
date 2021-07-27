@@ -65,13 +65,13 @@ export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
 # set default location
 if [ -z "$ASB_LOCATION" ]
 then
-  export ASB_LOCATION=eastus2
+  export ASB_LOCATION=centralus
 fi
 
 # set default geo redundant location for ACR
 if [ -z "$ASB_GEO_LOCATION" ]
 then
-  export ASB_GEO_LOCATION=centralus
+  export ASB_GEO_LOCATION=eastus2
 fi
 
 # make sure the locations are different

@@ -55,16 +55,23 @@ cd $(dirname $0)
 # save param as ASB_TEAM_NAME
 export ASB_TEAM_NAME=$1
 
+# set default domain name
+if [ -z "$ASB_DNS_ZONE" ]
+then
+  export ASB_DNS_ZONE=aks-sb.com
+fi
+export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
+
 # set default location
 if [ -z "$ASB_LOCATION" ]
 then
-  export ASB_LOCATION=eastus2
+  export ASB_LOCATION=centralus
 fi
 
 # set default geo redundant location for ACR
 if [ -z "$ASB_GEO_LOCATION" ]
 then
-  export ASB_GEO_LOCATION=centralus
+  export ASB_GEO_LOCATION=eastus2
 fi
 
 # make sure the locations are different
@@ -91,16 +98,27 @@ then
   exit 1
 fi
 
-export ASB_GIT_REPO=$(git remote -v | cut -f 2 | cut -f 1 -d " " | head -n 1)
-
+# github info for flux
 if [ -z "$ASB_GIT_REPO" ]
 then
-  echo Please cd to an ASB git repo
-  exit 1
+  export ASB_GIT_REPO=$(git remote -v | cut -f 2 | cut -f 1 -d " " | head -n 1)
+
+  if [ -z "$ASB_GIT_REPO" ]
+  then
+    echo Please cd to an ASB git repo
+    exit 1
+  fi
 fi
 
-export ASB_GIT_PATH=gitops
-export ASB_GIT_BRANCH=$(git status  --porcelain --branch | head -n 1 | cut -f 2 -d " " | cut -f 1 -d .)
+if [ -z "$ASB_GIT_PATH" ]
+then
+  export ASB_GIT_PATH=gitops
+fi
+
+if [ -z "$ASB_GIT_BRANCH" ]
+then
+  export ASB_GIT_BRANCH=$(git status  --porcelain --branch | head -n 1 | cut -f 2 -d " " | cut -f 1 -d .)
+fi
 
 # don't allow main branch
 if [ -z "$ASB_GIT_BRANCH" ] || [ "main" == "$ASB_GIT_BRANCH" ]
@@ -110,17 +128,14 @@ then
   exit 1
 fi
 
-# set default domain name
-export ASB_DNS_ZONE=aks-sb.com
-export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
-
 # resource group names
 export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
-export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hub
-export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spoke
+export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hubs
+export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spokes
 
 # export AAD env vars
 export ASB_TENANT_ID=$(az account show --query tenantId -o tsv)
+export ASB_TENANT_TLD=$(az ad signed-in-user show --query 'userPrincipalName' -o tsv | cut -d '@' -f 2 | sed 's/\"//')
 
 # save env vars
 ./saveenv.sh -y
@@ -192,4 +207,6 @@ az aks get-credentials -g $ASB_RG_CORE -n $ASB_AKS_NAME
 # rename context for simplicity
 kubectl config rename-context $ASB_AKS_NAME $ASB_TEAM_NAME
 
-echo "add DNS A record - $ASB_TEAM_NAME  $ASB_AKS_PIP"
+# Add "A" record for the app gateway IP to the public DNS Zone
+echo "Add DNS A record"
+echo "az network dns record-set a add-record -a $ASB_AKS_PIP -n $ASB_TEAM_NAME -g TLD -z aks-sb.com"
