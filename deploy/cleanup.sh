@@ -26,8 +26,8 @@ ASB_TEAM_NAME=$1
 
 # resource group names
 export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
-export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hub
-export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spoke
+export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hubs
+export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spokes
 
 export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
 export ASB_KEYVAULT_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)
@@ -54,3 +54,7 @@ kubectl config delete-context $ASB_TEAM_NAME
 
 echo ""
 echo "check group delete:  az group list -o table | grep $ASB_TEAM_NAME"
+
+echo ""
+echo "Delete DNS A Record (if you have permission)"
+echo "az network dns record-set a delete -g tld -z aks-sb.com -y -n $ASB_TEAM_NAME"

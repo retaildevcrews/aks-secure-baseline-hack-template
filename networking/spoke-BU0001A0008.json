@@ -151,21 +151,7 @@
                             "destinationPortRange": "443",
                             "destinationAddressPrefix": "VirtualNetwork",
                             "access": "Allow",
-                            "priority": 100,
-                            "direction": "Inbound"
-                        }
-                    },
-                    {
-                        "name": "Allow80InBound",
-                        "properties": {
-                            "description": "Allow ALL web traffic into 80. (If you wanted to allow-list specific IPs, this is where you'd list them.)",
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "Internet",
-                            "destinationPortRange": "80",
-                            "destinationAddressPrefix": "VirtualNetwork",
-                            "access": "Allow",
-                            "priority": 105,
+                            "priority": 101,
                             "direction": "Inbound"
                         }
                     },

@@ -524,12 +524,6 @@
                         "properties": {
                             "port": 443
                         }
-                    },
-                    {
-                        "name": "apw-frontend-http-ports",
-                        "properties": {
-                            "port": 80
-                        }
                     }
                 ],
                 "autoscaleConfiguration": {
@@ -613,19 +607,6 @@
                             ],
                             "requireServerNameIndication": true
                         }
-                    },
-                    {
-                        "name": "listener-http",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[concat(variables('apwResourceId'), '/frontendIPConfigurations/apw-frontend-ip-configuration')]"
-                            },
-                            "frontendPort": {
-                                "id": "[concat(variables('apwResourceId'), '/frontendPorts/apw-frontend-http-ports')]"
-                            },
-                            "protocol": "Http",
-                            "requireServerNameIndication": false
-                        }
                     }
                 ],
                 "requestRoutingRules": [
@@ -642,31 +623,6 @@
                             "backendHttpSettings": {
                                 "id": "[concat(variables('apwResourceId'), '/backendHttpSettingsCollection/aks-ingress-backendpool-httpsettings')]"
                             }
-                        }
-                    },
-                    {
-                        "name": "apw-http-routing-rules",
-                        "properties": {
-                            "ruleType": "Basic",
-                            "httpListener": {
-                                "id": "[concat(variables('apwResourceId'), '/httpListeners/listener-http')]"
-                            },
-                            "redirectConfiguration": {
-                                "id": "[concat(variables('apwResourceId'), '/redirectConfigurations/httpToHttps')]"
-                            }
-                        }
-                    }
-                ],
-                "redirectConfigurations": [
-                    {
-                        "name": "httpToHttps",
-                        "properties": {
-                            "redirectType": "Permanent",
-                            "targetListener": {
-                                "id": "[concat(variables('apwResourceId'), '/httpListeners/listener-https')]"
-                            },
-                            "includePath": true,
-                            "includeQueryString": true
                         }
                     }
                 ]
@@ -1092,9 +1048,9 @@
                     {
                         "name": "npsystem",
                         "count": 3,
-                        "vmSize": "Standard_DS2_v2",
+                        "vmSize": "Standard_A4_v2",
                         "osDiskSizeGB": 80,
-                        "osDiskType": "Ephemeral",
+                        "osDiskType": "Managed",
                         "osType": "Linux",
                         "minCount": 3,
                         "maxCount": 4,
@@ -1119,9 +1075,9 @@
                     {
                         "name": "npuser01",
                         "count": 2,
-                        "vmSize": "Standard_DS3_v2",
+                        "vmSize": "Standard_A4_v2",
                         "osDiskSizeGB": 120,
-                        "osDiskType": "Ephemeral",
+                        "osDiskType": "Managed",
                         "osType": "Linux",
                         "minCount": 2,
                         "maxCount": 5,
@@ -1161,7 +1117,7 @@
                         "enabled": false
                     },
                     "azurepolicy": {
-                        "enabled": false,
+                        "enabled": true,
                         "config": {
                             "version": "v2"
                         }
@@ -2025,7 +1981,7 @@
                 "policyDefinitionId": "[variables('policyResourceIdEnforceImageSource')]",
                 "parameters": {
                     "allowedContainerImagesRegex": {
-                        "value": "[concat(variables('defaultAcrName'),'.azurecr.io/.+$|mcr.microsoft.com/.+$|ghcr.io/retaildevcrews/.+$|docker.io/fluxcd/flux.+$|docker.io/weaveworks/kured.+$|docker.io/library/.+$')]"
+                        "value": "[concat(variables('defaultAcrName'),'.azurecr.io/.+$|mcr.microsoft.com/.+$|docker.io/fluxcd/flux.+$|docker.io/weaveworks/kured.+$|docker.io/retaildevcrew/.+$|docker.io/library/.+$')]"
                     },
                     "excludedNamespaces": {
                         "value": [
@@ -2033,9 +1989,7 @@
                             "gatekeeper-system",
                             "azure-arc",
                             "flux-cd",
-                            "ingress",
-                            "ngsa",
-                            "tiny"
+                            "ingress"
                         ]
                     },
                     "effect": {

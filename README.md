@@ -1,10 +1,19 @@
-# AKS Secure Baseline Hack
+# AKS Secure Baseline OpenHack
 
-> Welcome to the Patterns and Practices (PnP) AKS Secure Baseline (ASB) hack!
+> Welcome to the Patterns and Practices (PnP) AKS Secure Baseline (ASB) OpenHack!
 
 - The Patterns and Practices AKS Secure Baseline repo is located [here](https://github.com/mspnp/aks-secure-baseline)
-  - This repo is a summarization specifically for the hack and `should not be used for production deployments`
+  - This repo is a summarization specifically for the OpenHack and `should not be used for production deployments`
   - Please refer to the PnP repo as the `upstream repo`
+
+## Before Deploying ASB
+
+- go to [idweb](https://idweb/) to setup a security group (requires VPN)
+- create a security group
+  - mail-enabled is optional
+  - do not use spaces in the name
+- add yourself and your team to the security group
+- AAD propogation can take up to 30 minutes
 
 ## Filing Bugs
 
@@ -12,45 +21,84 @@
 
 ## Deploying ASB
 
-### Getting Started
-
-### Login to Azure Portal
-
-- Login using the credentials provided at <https://portal.azure.com>
-  - You will need to change your password
+> Make sure you accepted your GitHub invitation to the org BEFORE creating your Codespace!
 
 ### Create Codespace
 
-- The `AKS Secure Baseline` repo for the hack is at [github/retaildevcrews/ocw-asb](https://github.com/retaildevcrews/ocw-asb)
+> The OpenHack requires Codespaces and zsh
+> If you have dotfiles that default to bash, make sure to use zsh as your terminal
+
+- The `AKS Secure Baseline` repo for the OpenHack is at [github//asb-spark/openhack](https://github.com/asb-spark/openhack)
 - Open this repo in your web browser
 - Create a new `Codespace` in this repo
   - If the `fork option` appears, you need to request permission to the repo
   - Do not choose fork
-- If you are not using Codespaces, ask your coach for this value
-  - `export ASB_TENANT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+
+🛑 Do not ignore an error as your deploy will fail in about an hour
+
+- the likely problem is you didn't accept your invite to the organization
+- close this Codespace, accept your invite and start over
 
 ```bash
 
+# check certs
+if [ -z $APP_GW_CERT ]; then echo "App Gateway cert not set correctly"; fi
+if [ -z $INGRESS_CERT ]; then echo "Ingress cert not set correctly"; fi
+if [ -z $INGRESS_KEY ]; then echo "Ingress key not set correctly"; fi
 
-# login to the Azure subscription for the hack
-az login -t $ASB_TENANT_ID
+```
 
-# verify the correct subscription - bartr-cloudatx-asb
-az account show
+```bash
 
-# install kubectl and kubelogin
-sudo az aks install-cli
+🛑 Run these commands one at a time
+
+# login to your Azure subscription
+az login
+
+# verify the correct subscription
+# use az account set -s <sub> to change the sub if required
+# you must be the owner of the subscription
+# tenant ID should be 72f988bf-86f1-41af-91ab-2d7cd011db47 
+az account show -o table
+
+```
+
+### Verify the security group
+
+```bash
+
+# set your security group name
+export ASB_CLUSTER_ADMIN_GROUP=asb-hack
+
+# verify you are a member of the security group
+# if you are not a member, please make sure you filled out the Office Form and IM bartr directly
+az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o table | grep <youralias>
 
 ```
 
 ### Set Team Name
 
-> Team Name is very particular and won't fail for about an hour ...
+> Team Name is used in resource naming to provide unique names for the OpenHack
+
+- Team Name is very particular and won't fail for about an hour ...
+  - we recommend youralias1 (not first.last)
+    - if your alias > 7 chars, you need to trim it to total length of 8 or less
+  - must be lowercase
+  - must start with a-z
+  - must only be a-z or 0-9
+  - max length is 8
+  - min length is 3
 
 ```bash
 
+🛑 Set your Team Name per the above rules
+
 #### set the team name
 export ASB_TEAM_NAME=[starts with a-z, [a-z,0-9], max length 8]
+
+```
+
+```bash
 
 # make sure the resource group doesn't exist
 az group list -o table | grep $ASB_TEAM_NAME
@@ -65,36 +113,247 @@ git branch -a | grep $ASB_TEAM_NAME
 ### Create git branch
 
 > Do not PR a `cluster branch` into main
+>
+> The cluster branch name must be the same as the Team name
 
 ```bash
 
 # create a branch for your cluster
+# Do not change the branch name from $ASB_TEAM_NAME
 git checkout -b $ASB_TEAM_NAME
 git push -u origin $ASB_TEAM_NAME
 
 ```
 
-### Setup AKS Secure Baseline
-
-> This takes 45 - 60 minutes to complete
+### Choose your deployment region
 
 ```bash
 
-./setup.sh $ASB_TEAM_NAME
+🛑 Only choose one pair from the below block
+
+### choose the closest pair - not all regions support ASB
+
+### do not use - eastus2 is capacity constrained
+#export ASB_LOCATION=eastus2
+#export ASB_GEO_LOCATION=centralus
+
+export ASB_LOCATION=centralus
+export ASB_GEO_LOCATION=eastus2
+
+export ASB_LOCATION=westus2
+export ASB_GEO_LOCATION=westcentralus
+
+export ASB_LOCATION=northeurope
+export ASB_GEO_LOCATION=westeurope
+
+export ASB_LOCATION=australiaeast
+export ASB_GEO_LOCATION=australiasoutheast
+
+export ASB_LOCATION=japaneast
+export ASB_GEO_LOCATION=japanwest
+
+# Note that Azure Bastion is not available in SE Asia region
+# it is not required for this hack but is part of AKS Secure Baseline
+export ASB_LOCATION=southeastasia
+export ASB_GEO_LOCATION=eastasia
+
+export ASB_LOCATION=eastus2
+export ASB_GEO_LOCATION=centralus
 
 ```
 
-### Push Updates
-
-> The setup process creates 5 new files. GitOps will not work unless these files are merged into your branch.
+### Save your work in-progress
 
 ```bash
 
-# load the env vars created by setup
-# you can reload the env vars at any time by sourcing the file
-source ${ASB_TEAM_NAME}.asb.env
+# run the saveenv.sh script at any time to save ASB_* variables to ASB_TEAM_NAME.asb.env
+./saveenv.sh -y
 
-# check deltas - there should be 5 new files
+# if your terminal environment gets cleared, you can source the file to reload the environment variables
+# source ${ASB_TEAM_NAME}.asb.env
+
+# install kubectl and kubelogin
+sudo az aks install-cli
+
+```
+
+### Setup AKS Secure Baseline
+
+> Complete setup takes about an hour
+
+#### Validate env vars
+
+```bash
+
+# validate team name is set up
+echo $ASB_TEAM_NAME
+
+# verify the correct subscription
+az account show -o table
+
+# check certs
+if [ -z $APP_GW_CERT ]; then echo "App Gateway cert not set correctly"; fi
+if [ -z $INGRESS_CERT ]; then echo "Ingress cert not set correctly"; fi
+if [ -z $INGRESS_KEY ]; then echo "Ingress key not set correctly"; fi
+
+```
+
+#### AAD
+
+```bash
+
+# get AAD cluster admin group
+export ASB_CLUSTER_ADMIN_ID=$(az ad group show -g $ASB_CLUSTER_ADMIN_GROUP --query objectId -o tsv)
+
+# verify AAD admin group
+echo $ASB_CLUSTER_ADMIN_GROUP
+echo $ASB_CLUSTER_ADMIN_ID
+
+```
+
+#### Set variables for deployment
+
+```bash
+
+# set GitOps repo
+export ASB_GIT_REPO=$(git remote get-url origin)
+export ASB_GIT_BRANCH=$ASB_TEAM_NAME
+export ASB_GIT_PATH=gitops
+
+# set default domain name
+export ASB_DNS_ZONE=aks-sb.com
+export ASB_DOMAIN=${ASB_TEAM_NAME}.${ASB_DNS_ZONE}
+
+# resource group names
+export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
+export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hub
+export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spoke
+
+# export AAD env vars
+export ASB_TENANT_ID=$(az account show --query tenantId -o tsv)
+
+# save env vars
+./saveenv.sh -y
+
+```
+
+### Azure Policies
+
+If you have additional Azure Policies on your subscription, it could cause deployment to fail. If that happens, check your policies and disable anything that is blocking.
+
+Ask the coaches for help debugging.
+
+#### Create Resource Groups
+
+```bash
+
+# create the resource groups
+az group create -n $ASB_RG_HUB -l $ASB_LOCATION
+az group create -n $ASB_RG_SPOKE -l $ASB_LOCATION
+az group create -n $ASB_RG_CORE -l $ASB_LOCATION
+
+```
+
+#### Setup Network
+
+```bash
+
+# this section takes 15-20 minutes to complete
+
+# create hub network
+az deployment group create -g $ASB_RG_HUB -f networking/hub-default.json -p location=${ASB_LOCATION} --query name
+export ASB_VNET_HUB_ID=$(az deployment group show -g $ASB_RG_HUB -n hub-default --query properties.outputs.hubVnetId.value -o tsv)
+
+# create spoke network
+az deployment group create -g $ASB_RG_SPOKE -f networking/spoke-BU0001A0008.json -p location=${ASB_LOCATION} hubVnetResourceId="${ASB_VNET_HUB_ID}" --query name
+export ASB_NODEPOOLS_SUBNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n spoke-BU0001A0008 --query properties.outputs.nodepoolSubnetResourceIds.value -o tsv)
+
+# create Region A hub network
+az deployment group create -g $ASB_RG_HUB -f networking/hub-regionA.json -p location=${ASB_LOCATION} nodepoolSubnetResourceIds="['${ASB_NODEPOOLS_SUBNET_ID}']" --query name
+export ASB_SPOKE_VNET_ID=$(az deployment group show -g $ASB_RG_SPOKE -n spoke-BU0001A0008 --query properties.outputs.clusterVnetResourceId.value -o tsv)
+
+./saveenv.sh -y
+
+```
+
+#### Setup AKS
+
+```bash
+
+### this section takes 15-20 minutes
+
+# create AKS
+az deployment group create -g $ASB_RG_CORE \
+  -f cluster-stamp.json \
+  -n cluster-${ASB_TEAM_NAME} \
+  -p location=${ASB_LOCATION} \
+     geoRedundancyLocation=${ASB_GEO_LOCATION} \
+     asbTeamName=${ASB_TEAM_NAME} \
+     asbDomain=${ASB_DOMAIN} \
+     asbDnsZone=${ASB_DNS_ZONE} \
+     targetVnetResourceId=${ASB_SPOKE_VNET_ID} \
+     clusterAdminAadGroupObjectId=${ASB_CLUSTER_ADMIN_ID} \
+     k8sControlPlaneAuthorizationTenantId=${ASB_TENANT_ID} \
+     appGatewayListenerCertificate=${APP_GW_CERT} \
+     aksIngressControllerCertificate="$(echo $INGRESS_CERT | base64 -d)" \
+     aksIngressControllerKey="$(echo $INGRESS_KEY | base64 -d)" \
+     --query name
+
+```
+
+#### Set AKS env vars
+
+```bash
+
+# get the name of the deployment key vault
+export ASB_KV_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)
+
+# get cluster name
+export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
+
+# Get the public IP of our App gateway
+export ASB_AKS_PIP=$(az network public-ip show -g $ASB_RG_SPOKE --name pip-BU0001A0008-00 --query ipAddress -o tsv)
+
+# Get the AKS Ingress Controller Managed Identity details.
+export ASB_TRAEFIK_RESOURCE_ID=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityResourceId.value -o tsv)
+export ASB_TRAEFIK_CLIENT_ID=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksIngressControllerPodManagedIdentityClientId.value -o tsv)
+export ASB_POD_MI_ID=$(az identity show -n podmi-ingress-controller -g $ASB_RG_CORE --query principalId -o tsv)
+
+# config traefik
+export ASB_INGRESS_CERT_NAME=appgw-ingress-internal-aks-ingress-tls
+export ASB_INGRESS_KEY_NAME=appgw-ingress-internal-aks-ingress-key
+
+./saveenv.sh -y
+
+```
+
+### Create setup files
+
+```bash
+
+# traefik config
+rm -f gitops/ingress/02-traefik-config.yaml
+cat templates/traefik-config.yaml | envsubst > gitops/ingress/02-traefik-config.yaml
+
+# app ingress
+rm -f gitops/ngsa/ngsa-ingress.yaml
+cat templates/ngsa-ingress.yaml | envsubst > gitops/ngsa/ngsa-ingress.yaml
+
+# GitOps (flux)
+rm -f flux.yaml
+cat templates/flux.yaml | envsubst  > flux.yaml
+
+```
+
+### Push to GitHub
+
+> The setup process creates 4 new files
+>
+> GitOps will not work unless these files are merged into your branch
+
+```bash
+
+# check deltas - there should be 4 new files
 git status
 
 # push to your branch
@@ -104,20 +363,7 @@ git push
 
 ```
 
-### Add Team to Cluster Admin Group
-
-```bash
-
-### repeat for each of the other members of your team
-az ad group member add -g $ASB_CLUSTER_ADMIN_GROUP --member-id $(az ad user show --query objectId -o tsv --id \
-changeThisForEachTeamMember@${ASB_TENANT_TLD})
-
-# list users
-az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o table
-
-```
-
-### Validation
+### AKS Validation
 
 ```bash
 
@@ -125,7 +371,7 @@ az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o 
 az aks get-credentials -g $ASB_RG_CORE -n $ASB_AKS_NAME
 
 # rename context for simplicity
-kubectl config rename-context $ASB_RG_CORE $ASB_TEAM_NAME
+kubectl config rename-context $ASB_AKS_NAME $ASB_TEAM_NAME
 
 # check the nodes
 # requires Azure login
@@ -138,19 +384,7 @@ kubectl get pods -A
 
 ```
 
-### Deploy Configuration and App (optional)
-
-> ASB is designed to use Flux for GitOps
-
-To manually deploy the entire stack for testing
-
-```bash
-
-kubectl apply -f gitops
-
-```
-
-### Setup Flux
+### Deploy Flux
 
 > ASB uses `Flux CD` for `GitOps`
 
@@ -159,7 +393,7 @@ kubectl apply -f gitops
 # setup flux
 kubectl apply -f flux.yaml
 
-# check the pods until everything is running
+# 🛑 check the pods until everything is running
 kubectl get pods -n flux-cd -l app.kubernetes.io/name=flux
 
 # check flux logs
@@ -169,7 +403,7 @@ kubectl logs -n flux-cd -l app.kubernetes.io/name=flux
 
 ### Validate Ingress
 
-> ASB uses `Traefik` for `ingress`
+> ASB uses `Traefik` for ingress
 
 ```bash
 
@@ -181,15 +415,39 @@ kubectl get pods -n ingress
 ### this can take 1-2 minutes
 ### if you get a 502 error retry until you get 200
 
-# test http redirect for a 302
-curl -i http://${ASB_DOMAIN}/memory/healthz
-
 # test https
 curl https://${ASB_DOMAIN}/memory/version
 
 ### Congratulations! You have GitOps setup on ASB!
 
 ```
+
+## Challenges
+
+### Challenge 1
+
+> Challenges do not have step-by-step instructions
+
+- [Create a dashboard visualizing blocked traffic](./challenges/blocked-traffic-dashboard/README.md)
+
+### Challenge 2
+
+- [Redirect `HTTP` requests to `HTTPS` in App Gateway](./challenges/redirect-http-to-https/README.md)
+
+### Challenge 3
+
+- Deploy Azure Container Registry [image](./challenges/azure-container-registry/README.md)
+
+### Challenge 4
+
+- [Deploy Web Validate](./challenges/deploy-WebV/README.md)
+
+### Other ideas for exploring
+
+- Explore `Azure Log Analytics` for observability
+- Explore an idea from your experiences / upcoming customer projects
+- Fix a bug that you ran into during the OpenHack
+- Most importantly, `have fun and learn at the OpenHack!`
 
 ### Resetting the cluster
 
@@ -207,12 +465,10 @@ kubectl delete ns ngsa
 kubectl delete ns ingress
 kubectl delete ns cluster-baseline-settings
 
-# delete any additional namespaces you created
+# check the namespaces
+kubectl get ns
 
-# check the pods
-kubectl get pods -A
-
-# start over at Setup Flux
+# start over at Deploy Flux
 
 ```
 
@@ -223,15 +479,46 @@ kubectl get pods -A
 - make sure to use a new ASB_TEAM_NAME
 - you must create a new branch or GitOps will fail on both clusters
 
-### Delete Resources
+## Delete Azure Resources
 
 > Do not just delete the resource groups
 
+Make sure ASB_TEAM_NAME is set correctly
+
 ```bash
 
-./cleanup.sh $ASB_TEAM_NAME
+echo $ASB_TEAM_NAME
 
-### delete your git branch if desired
+```
+
+Delete the cluster
+
+```bash
+
+# resource group names
+export ASB_RG_CORE=rg-${ASB_TEAM_NAME}-core
+export ASB_RG_HUB=rg-${ASB_TEAM_NAME}-networking-hub
+export ASB_RG_SPOKE=rg-${ASB_TEAM_NAME}-networking-spoke
+
+export ASB_AKS_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.aksClusterName.value -o tsv)
+export ASB_KEYVAULT_NAME=$(az deployment group show -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME} --query properties.outputs.keyVaultName.value -o tsv)
+export ASB_LA_HUB=$(az monitor log-analytics workspace list -g $ASB_RG_HUB --query [0].name -o tsv)
+
+# delete and purge the key vault
+az keyvault delete -n $ASB_KEYVAULT_NAME
+az keyvault purge -n $ASB_KEYVAULT_NAME
+
+# hard delete Log Analytics
+az monitor log-analytics workspace delete -y --force true -g $ASB_RG_CORE -n la-${ASB_AKS_NAME}
+az monitor log-analytics workspace delete -y --force true -g $ASB_RG_HUB -n $ASB_LA_HUB
+
+# delete the resource groups
+az group delete -y --no-wait -g $ASB_RG_CORE
+az group delete -y --no-wait -g $ASB_RG_HUB
+az group delete -y --no-wait -g $ASB_RG_SPOKE
+
+# delete from .kube/config
+kubectl config delete-context $ASB_TEAM_NAME
 
 # group deletion can take 10 minutes to complete
 az group list -o table | grep $ASB_TEAM_NAME
@@ -241,34 +528,17 @@ az group delete -y --no-wait -g $ASB_RG_SPOKE
 
 ```
 
-## Challenges
+## Delete git branch
 
-Here are some ideas for `next steps`
+```bash
 
-> Please document and PR the steps (even if incomplete) into the /challenges folder
+git checkout main
+git pull
+git push origin --delete $ASB_TEAM_NAME
+git fetch -pa
+git branch -D $ASB_TEAM_NAME
 
-- Integrate `APIM` into the architecture
-- Install all the pre-reqs locally and create a cluster from your laptop
-  - make sure to use a unique `ASB_TEAM_NAME`
-- Use the existing `Key Vault` to load the certs
-  - Copy and modify the template to not create a new Key Vault
-- Create a dashboard visualizing blocked traffic
-- Redirect `HTTP` requests to `HTTPS` in App Gateway
-- Explore `Azure Log Analytics` for observability
-- Deploy `Prometheus` and `Grafana` for CNCF observability
-- Deploy `Fluent Bit` to `Log Analytics` for `Application Logging`
-  - Instructions [here](https://aka.ms/fbla)
-- Run `Load Tests` and test `auto-scaling`
-- Do a `blue / green` deployment of `NGSA-Memory`
-- Deploy two `ASB Clusters` in the same `Network Hub`
-- Deploy two `ASB Clusters` in `different regions`
-- Deploy `Cosmos DB` in the network and add `NGSA-Cosmos` to the cluster
-- Explore an idea from your experiences / upcoming customer projects
-- Experiment with `AutoGitOps`
-- Fix a `bug` that you ran into during the `hack`
-- Fix a `bug` from the board
-- Improve the `Developer Experience` (several ideas on the board or come up with your own!)
-- Most importantly, `have fun and learn at the hack!`
+```
 
 ### Random Notes
 
@@ -284,5 +554,9 @@ az aks show -n $ASB_AKS_NAME -g rg-bu0001a0008-$ASB_TEAM_NAME --query provisioni
 
 # disable policies (last resort for debugging)
 az aks disable-addons --addons azure-policy -g rg-bu0001a0008-$ASB_TEAM_NAME -n $ASB_AKS_NAME
+
+# delete your AKS cluster (keep your network)
+### TODO - this doesn't work completely
+az deployment group delete -g $ASB_RG_CORE -n cluster-${ASB_TEAM_NAME}
 
 ```

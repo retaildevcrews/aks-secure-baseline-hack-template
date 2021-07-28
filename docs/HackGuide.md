@@ -4,7 +4,7 @@
 
 ### Attendee Prerequisites
 
-- Working knowledge of Docker, k8s and AKS
+- Working knowledge of Docker, Kubernetes and AKS
 - GitHub ID with 2FA enabled
 - Azure subscription with owner privileges
 
@@ -14,8 +14,8 @@
   - Send link to [AKS Secure Baseline](https://github.com/mspnp/aks-secure-baseline) as a pre-read
   - Pay particular attention to `networking` and `Azure Policy`
 - Pre-session
-  - For customers, setup an "office hour" 3-4 days before hack
-- Send Calendar Invite
+  - For customers, setup an "office hours" 3-4 days before hack
+- Send Calendar Invites
   - Send reminders one week before event and again 2 days before event
   - Pre-assign coaches to teams if possible
   - Setup breakout meetings in advance
@@ -44,33 +44,20 @@
 
 ### Azure Subscription
 
-- You need an Azure Subscription with AAD permissions
+- Each attendee needs an Azure subscription with owner privileges
+  - You can opt to use one subscription for everyone (see quota note)
+  - Subscriptions can be shared
+  - Any shared subscriptions requires `ASB_TEAM_NAME`
 - Domain / cert
-  - Register a TLD in the subscription
+  - Register a TLD in a subscription in the tenant
   - Add a wildcard cert stored in Key Vault
   - Setup DNS - By default, DNS is locked so the A records can't be deleted
   - We use the `TLD` resource group
-- Consider creating an AAD tenant just for the hack
-  - After the hack, use your real tenant
-  - We haven't fully tested this yet but it seems like a best practice
 - Create an AAD hack group
-  - Grant AAD User Admin permissions
+  - Do not use spaces in the name
   - Grant Azure Subscription Contributor permissions
-- Create Users
-  - Add to AAD hack group
-  - Email login info and validate Azure access before hack starts
-- Check Azure Quotas and increase if needed
-  - Public IPs default to 100 and each cluster needs 4 PIPs
-  - Each cluster deploys 5 VMs
-  - Make sure you have quota and budget
-    - We suggest 1.5-2 clusters per attendee for quota (e.g., cost, public IPs, cores, etc.)
-    - Encourage deleting unused resources
-
-### AIRS Subscription
-
-- Each attendee should have an Azure AIRS Subscription
-- Create Azure Security Group via [idweb](https://idweb/)
-- Add hack attendees to security group
+  - Add users to AAD hack group
+  - Use [idweb](https://idweb/) for AIRS subscriptions (MS internal)
 - Check Azure Quotas and increase if needed
   - Public IPs default to 100 and each cluster needs 4 PIPs
   - Each cluster deploys 5 VMs
@@ -80,7 +67,7 @@
 
 ### Repo Setup
 
-- Clone (not fork) this repo into a GitHub tenant with Codespaces enabled
+- Create your hack repo from this template in a GitHub tenant with Codespaces enabled
 - Set the `ASB_TENANT_ID` repo secret to your Azure Subscription Tenant ID
 - Set branch protection rule on `main`
 - **Do NOT merge a PR with the cluster generated files into `main`**
@@ -89,15 +76,12 @@
 - Validate Codespaces access before hack
   - Some people may start early
   - Keep content simple until hack starts
-- Setup is currently done via `setup.sh`
-  - We do this to make maintenance easier
-  - You can copy the commands into readme.md `fences` if you want to do step-by-step
-    - Open the GitHub repo in a browser and you'll get a copy button for each fence
-    - Codespaces does not have the copy button and hackers make a lot of copy-paste mistakes
+- Delete the deploy directory
+  - It has the challenges already integrated
 
 ### Communication Setup
 
-- Setup Teams or use GitHub Discussions
+- Setup Teams
   - Most hacks will have multiple breakout teams
   - Add coaches to breakout teams
   - We used `Teams Meetings` (not channels or chats) and it worked well
