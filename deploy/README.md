@@ -1,5 +1,13 @@
 # ASB Auto Deploy
 
+## Delete this directory
+
+- This directory contains the challenges integrated into setup
+- Remove from your hack repo after you create
+
+> This directory is for members of the Retail Dev Crews team only
+> The scripts will not work outside our environment without modification
+
 ## Deploy ASB
 
 > Detailed instructions are in [readme](../readme.md)
@@ -23,25 +31,7 @@
   ./setup.sh $ASB_TEAM_NAME
   ```
 
-- Push Updates
-
-  ```bash
-
-  # load the env vars created by setup
-  # you can reload the env vars at any time by sourcing the file
-  source ${ASB_TEAM_NAME}.asb.env
-
-  # check deltas - there should be 5 new files
-  git status
-
-  # push to your branch
-  git add .
-  git commit -m "added cluster config"
-  git push
-
-  ```
-
-- Follow the validation steps
+### Follow the validation steps
 
 ### Cleanup ASB
 
