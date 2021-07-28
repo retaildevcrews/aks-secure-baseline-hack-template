@@ -12,6 +12,8 @@ Prerequisites:
 
 > You should only run this one time per repo
 
+Rename `dns.txt` to `dns.yaml`
+
 Create a service principal and give it permissions to manage DNS records in the DNS Zone for the hack.
 
 ```bash
