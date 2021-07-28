@@ -6,9 +6,6 @@
   - This repo is a summarization specifically for the OpenHack and `should not be used for production deployments`
   - Please refer to the PnP repo as the `upstream repo`
 
-> These steps are for setting up AKS secure baseline on internal Microsoft AIRS subscriptions
-> Use the steps in [readme.md](./README.md) if you're not using an AIRS subscription
-
 ## Before Deploying ASB
 
 - go to [idweb](https://idweb/) to setup a security group (requires VPN)
@@ -17,9 +14,6 @@
   - do not use spaces in the name
 - add yourself and your team to the security group
 - AAD propogation can take up to 30 minutes
-
-
-> TODO - the rest of this should be the same - see if we can consolidate
 
 ## Filing Bugs
 
@@ -138,8 +132,10 @@ git push -u origin $ASB_TEAM_NAME
 🛑 Only choose one pair from the below block
 
 ### choose the closest pair - not all regions support ASB
-export ASB_LOCATION=eastus2
-export ASB_GEO_LOCATION=centralus
+
+### do not use - eastus2 is capacity constrained
+#export ASB_LOCATION=eastus2
+#export ASB_GEO_LOCATION=centralus
 
 export ASB_LOCATION=centralus
 export ASB_GEO_LOCATION=eastus2
@@ -156,6 +152,8 @@ export ASB_GEO_LOCATION=australiasoutheast
 export ASB_LOCATION=japaneast
 export ASB_GEO_LOCATION=japanwest
 
+# Note that Azure Bastion is not available in SE Asia region
+# it is not required for this hack but is part of AKS Secure Baseline
 export ASB_LOCATION=southeastasia
 export ASB_GEO_LOCATION=eastasia
 
@@ -168,14 +166,14 @@ export ASB_GEO_LOCATION=centralus
 
 ```bash
 
-# install kubectl and kubelogin
-sudo az aks install-cli
-
 # run the saveenv.sh script at any time to save ASB_* variables to ASB_TEAM_NAME.asb.env
 ./saveenv.sh -y
 
 # if your terminal environment gets cleared, you can source the file to reload the environment variables
 # source ${ASB_TEAM_NAME}.asb.env
+
+# install kubectl and kubelogin
+sudo az aks install-cli
 
 ```
 
