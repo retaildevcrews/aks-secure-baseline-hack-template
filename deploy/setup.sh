@@ -162,7 +162,7 @@ az group create -n $ASB_RG_CORE -l $ASB_LOCATION
 ./saveenv.sh -y
 
 # deploy the network
-az deployment group create -g $ASB_RG_HUB -f networking/hub-default.json -p location=${ASB_LOCATION}
+az deployment group create -g $ASB_RG_HUB -f ../networking/hub-default.json -p location=${ASB_LOCATION}
 export ASB_VNET_HUB_ID=$(az deployment group show -g $ASB_RG_HUB -n hub-default --query properties.outputs.hubVnetId.value -o tsv)
 
 az deployment group create -g $ASB_RG_SPOKE -f networking/spoke-BU0001A0008.json -p location=${ASB_LOCATION} hubVnetResourceId="${ASB_VNET_HUB_ID}"
