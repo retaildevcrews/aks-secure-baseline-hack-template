@@ -67,11 +67,11 @@ az account show -o table
 
 ```bash
 
-# set your security group name
-export ASB_CLUSTER_ADMIN_GROUP=asb-hack
+# set your security group name (the security group you created in the first step above)
+export ASB_CLUSTER_ADMIN_GROUP=<your security group name>
 
 # verify you are a member of the security group
-# if you are not a member, please make sure you filled out the Office Form and IM bartr directly
+# if you are not a member, please ask the security group owner to add you
 az ad group member list -g $ASB_CLUSTER_ADMIN_GROUP  --query [].mailNickname -o table | grep <youralias>
 
 ```
