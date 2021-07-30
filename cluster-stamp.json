@@ -138,10 +138,10 @@
         "subRgUniqueString": "[take(uniqueString('aks', subscription().subscriptionId, resourceGroup().id), 8)]",
 
         "nodeResourceGroupName": "[concat('rg-', parameters('asbTeamName'), '-nodepools')]",
-        "clusterName": "[concat('aks-', variables('subRgUniqueString'), '-', parameters('asbTeamName'))]",
+        "clusterName": "[concat('aks-', parameters('asbTeamName'), '-', variables('subRgUniqueString'))]",
         "logAnalyticsWorkspaceName": "[concat('la-', variables('clusterName'))]",
         "containerInsightsSolutionName": "[concat('ContainerInsights(', variables('logAnalyticsWorkspaceName'),')')]",
-        "defaultAcrName": "[concat('acraks', variables('subRgUniqueString'), parameters('asbTeamName'))]",
+        "defaultAcrName": "[concat('acraks', parameters('asbTeamName'), variables('subRgUniqueString'))]",
 
         "vNetResourceGroup": "[split(parameters('targetVnetResourceId'),'/')[4]]",
         "vnetName": "[split(parameters('targetVnetResourceId'),'/')[8]]",
