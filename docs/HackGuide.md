@@ -51,6 +51,14 @@
 - Domain / cert
   - Register a TLD in a subscription in the tenant
   - Add a wildcard cert stored in Key Vault
+    - Include CA bundle with wildcard cert in key vault by combining cert and ca-bundle files into a variable, then import value into the ingress secret.
+
+      ```bash
+      export mergedVault=$(cat filename.crt; cat filename.ca-bundle)
+
+      az keyvault secret set --name "ingress cert secret" --vault-name "your key vault name" --value "$mergedVault"
+      ```
+
   - Setup DNS - By default, DNS is locked so the A records can't be deleted
   - We use the `TLD` resource group
 - Create an AAD hack group
